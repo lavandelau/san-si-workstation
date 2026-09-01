@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>记忆翻牌游戏</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    background: linear-gradient(160deg, #f2fbf4 0%, #dff0e8 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px;
+  }
+  .topbar { width: 100%; max-width: 760px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .back {
+    display: inline-block;
+    background: #ffffff;
+    color: #4d9a6b;
+    border: 2px solid #cfe8d8;
+    border-radius: 999px;
+    padding: 10px 22px;
+    font-size: 18px;
+    text-decoration: none;
+    box-shadow: 0 3px 8px rgba(90,150,110,.15);
+  }
+  .back:hover { background: #eef8f1; }
+  .diff-group { display: flex; gap: 10px; align-items: center; background: #fff; border-radius: 999px; padding: 6px 10px; border: 2px solid #cfe8d8; }
+  .diff-group span { color: #6a8f7a; font-size: 16px; margin-right: 4px; }
+  .diff-btn {
+    border: none; border-radius: 999px; padding: 8px 20px;
+    font-size: 17px; cursor: pointer; background: #e8f2ec; color: #6a8f7a;
+    font-family: inherit; transition: all .2s;
+  }
+  .diff-btn.active { background: #6fbf8e; color: #fff; }
+  h1 { color: #4d9a6b; font-size: 36px; margin: 18px 0 6px; text-shadow: 1px 1px 0 #fff; }
+  .subtitle { color: #7a9c88; font-size: 17px; margin-bottom: 20px; }
+  .stats { display: flex; gap: 22px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
+  .stat { background: #ffffff; border-radius: 16px; padding: 12px 28px; box-shadow: 0 4px 10px rgba(90,150,110,.12); min-width: 150px; text-align: center; }
+  .stat .v { font-size: 32px; font-weight: bold; color: #4d9a6b; }
+  .stat .k { font-size: 15px; color: #7a9c88; margin-top: 2px; }
+  #board { display: grid; gap: 14px; justify-content: center; margin-bottom: 20px; }
+  .card {
+    width: 92px; height: 92px;
+    perspective: 600px; cursor: pointer;
+  }
+  .card-inner {
+    position: relative; width: 100%; height: 100%;
+    transform-style: preserve-3d;
+    transition: transform .4s;
+    border-radius: 18px;
+  }
+  .card.flipped .card-inner, .card.matched .card-inner { transform: rotateY(180deg); }
+  .face {
+    position: absolute; inset: 0;
+    backface-visibility: hidden;
+    border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    border: 3px solid #fff;
+  }
+  .face.front {
+    background: linear-gradient(135deg, #9fd4b4, #77bd99);
+    font-size: 38px; color: #fff;
+    box-shadow: 0 5px 12px rgba(90,150,110,.25);
+  }
+  .face.back {
+    background: #fffaf0;
+    transform: rotateY(180deg);
+    font-size: 48px;
+    box-shadow: 0 5px 12px rgba(180,150,90,.18);
+  }
+  .card.matched .face.back { background: #e5f7e5; border-color: #9fd4b4; }
+  .card.matched { animation: pop .4s ease; }
+  @keyframes pop { 0%{transform:scale(1)} 50%{transform:scale(1.12)} 100%{transform:scale(1)} }
+  .btn-row { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+  button {
+    font-family: inherit; font-size: 20px;
+    padding: 12px 30px; border: none; border-radius: 14px;
+    cursor: pointer; color: #fff; background: #6fbf8e;
+    transition: transform .15s ease, filter .15s ease;
+  }
+  button:hover { transform: translateY(-2px); filter: brightness(1.05); }
+  button:active { transform: translateY(1px); }
+  .btn-orange { background: #f0a868; }
+  .help {
+    margin-top: 22px; background: #f4fbf6; border: 2px dashed #bfe0cb;
+    border-radius: 16px; padding: 14px 20px;
+    color: #6a8f7a; font-size: 16px; line-height: 1.8; text-align: left; max-width: 760px;
+  }
+  .modal-mask {
+    position: fixed; inset: 0; background: rgba(60,100,75,.45);
+    display: none; align-items: center; justify-content: center; z-index: 10;
+  }
+  .modal-mask.show { display: flex; }
+  .modal {
+    background: #fff; border-radius: 26px; padding: 40px 50px;
+    text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,.25); max-width: 90%;
+  }
+  .modal h2 { color: #4d9a6b; font-size: 34px; margin-bottom: 14px; }
+  .modal p { font-size: 20px; color: #5c6b62; margin-bottom: 24px; line-height: 1.9; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a class="back" href="game_hall.html">🏠 返回大厅</a>
+    <div class="diff-group">
+      <span>难度：</span>
+      <button class="diff-btn active" id="btnEasy" onclick="setDifficulty('easy')">简单 (4对)</button>
+      <button class="diff-btn" id="btnNormal" onclick="setDifficulty('normal')">普通 (8对)</button>
+    </div>
+  </div>
+  <h1>🃏 记忆翻牌</h1>
+  <p class="subtitle">点开两张卡片，找到一对相同的好朋友！</p>
+
+  <div class="stats">
+    <div class="stat"><div class="v" id="sPairs">0</div><div class="k">已配对</div></div>
+    <div class="stat"><div class="v" id="sSteps">0</div><div class="k">总步数</div></div>
+    <div class="stat"><div class="v" id="sBest">-</div><div class="k">最佳步数</div></div>
+  </div>
+
+  <div id="board"></div>
+
+  <div class="btn-row">
+    <button onclick="startGame()">🔄 重新开始</button>
+  </div>
+
+  <div class="help">
+    📖 游戏说明：<br>
+    1. 每次翻开两张卡片，如果图案一样就配对成功，不一样会自动盖回去。<br>
+    2. 记住翻过的卡片位置，用最少的步数把所有对子找出来！<br>
+    3. 简单模式 4 对，普通模式 8 对。每种难度的最佳步数都会分别记录。
+  </div>
+
+  <div class="modal-mask" id="modalMask">
+    <div class="modal">
+      <h2 id="modalTitle">🎉 全部配对成功！</h2>
+      <p id="modalText"></p>
+      <button onclick="closeModal()">知道啦</button>
+      <button class="btn-orange" onclick="closeModal(); startGame()">再来一局</button>
+    </div>
+  </div>
+
+<script>
+/* ============ 音效（Web Audio 生成） ============ */
+var audioCtx = null;
+function ensureAudio() {
+  if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
+  if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+}
+function tone(freq, start, dur, type, vol) {
+  if (!audioCtx) return;
+  var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+  o.type = type || "sine"; o.frequency.value = freq;
+  g.gain.setValueAtTime(vol || 0.18, audioCtx.currentTime + start);
+  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + start + dur);
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start(audioCtx.currentTime + start); o.stop(audioCtx.currentTime + start + dur + 0.05);
+}
+function sndFlip()   { ensureAudio(); tone(520, 0, .08, "triangle", .12); }
+function sndMatch()  { ensureAudio(); tone(660, 0, .1); tone(880, .1, .15); }
+function sndMiss()   { ensureAudio(); tone(260, 0, .12, "square", .1); }
+function sndWin()    { ensureAudio(); [523, 659, 784, 1047].forEach(function (f, i) { tone(f, i * .15, .3); }); }
+
+/* ============ 游戏逻辑 ============ */
+var EMOJIS = ["🐶", "🐱", "🐰", "🐼", "🦁", "🐸", "🐧", "🦋", "🌟", "🍎"];
+var difficulty = "easy";
+var PAIRS = { easy: 4, normal: 8 };
+var COLS = { easy: 4, normal: 4 };
+var deck = [], first = null, second = null, lock = false;
+var steps = 0, matched = 0;
+
+function bestKey() { return "game_memory_best_" + difficulty; }
+function loadBest() {
+  var v = localStorage.getItem(bestKey());
+  document.getElementById("sBest").textContent = v ? v + " 步" : "暂无记录";
+}
+function setDifficulty(d) {
+  difficulty = d;
+  document.getElementById("btnEasy").classList.toggle("active", d === "easy");
+  document.getElementById("btnNormal").classList.toggle("active", d === "normal");
+  loadBest();
+  startGame();
+}
+function startGame() {
+  var n = PAIRS[difficulty];
+  var picks = EMOJIS.slice(0, n);
+  deck = picks.concat(picks);
+  for (var i = deck.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = deck[i]; deck[i] = deck[j]; deck[j] = t;
+  }
+  steps = 0; matched = 0; first = null; second = null; lock = false;
+  document.getElementById("sSteps").textContent = 0;
+  document.getElementById("sPairs").textContent = "0 / " + n;
+  var board = document.getElementById("board");
+  board.innerHTML = "";
+  board.style.gridTemplateColumns = "repeat(" + COLS[difficulty] + ", 92px)";
+  deck.forEach(function (emoji, idx) {
+    var c = document.createElement("div");
+    c.className = "card";
+    c.dataset.emoji = emoji;
+    c.innerHTML = '<div class="card-inner">' +
+      '<div class="face front">❓</div>' +
+      '<div class="face back">' + emoji + "</div></div>";
+    c.addEventListener("click", function () { flipCard(c); });
+    board.appendChild(c);
+  });
+}
+function flipCard(card) {
+  if (lock || card === first || card.classList.contains("flipped") || card.classList.contains("matched")) return;
+  ensureAudio();
+  card.classList.add("flipped");
+  sndFlip();
+  if (!first) { first = card; return; }
+  second = card;
+  steps++;
+  document.getElementById("sSteps").textContent = steps;
+  lock = true;
+  if (first.dataset.emoji === second.dataset.emoji) {
+    setTimeout(function () {
+      first.classList.remove("flipped");
+      second.classList.remove("flipped");
+      first.classList.add("matched");
+      second.classList.add("matched");
+      matched++;
+      document.getElementById("sPairs").textContent = matched + " / " + PAIRS[difficulty];
+      sndMatch();
+      first = null; second = null; lock = false;
+      if (matched === PAIRS[difficulty]) gameWin();
+    }, 350);
+  } else {
+    setTimeout(function () {
+      first.classList.remove("flipped");
+      second.classList.remove("flipped");
+      sndMiss();
+      first = null; second = null; lock = false;
+    }, 850);
+  }
+}
+function gameWin() {
+  sndWin();
+  var key = bestKey();
+  var old = parseInt(localStorage.getItem(key) || "0", 10);
+  var isRecord = !old || steps < old;
+  if (isRecord) localStorage.setItem(key, String(steps));
+  loadBest();
+  document.getElementById("modalTitle").innerHTML = "🎉 全部配对成功！";
+  document.getElementById("modalText").innerHTML =
+    "你用了 <b>" + steps + "</b> 步完成了 " + PAIRS[difficulty] + " 对配对！" +
+    (isRecord ? "<br>🏆 创造了新的最佳纪录！" : "<br>当前最佳纪录：" + Math.min(old, steps) + " 步，继续加油！");
+  document.getElementById("modalMask").classList.add("show");
+}
+function closeModal() { document.getElementById("modalMask").classList.remove("show"); }
+
+loadBest();
+startGame();
+</script>
+</body>
+</html>

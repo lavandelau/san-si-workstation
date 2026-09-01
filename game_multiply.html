@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>乘法口诀闯关</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    background: linear-gradient(160deg, #f4f1fd 0%, #e3ecfd 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px;
+  }
+  .topbar { width: 100%; max-width: 720px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .back {
+    display: inline-block;
+    background: #ffffff;
+    color: #6a76c9;
+    border: 2px solid #d5dcf5;
+    border-radius: 999px;
+    padding: 10px 22px;
+    font-size: 18px;
+    text-decoration: none;
+    box-shadow: 0 3px 8px rgba(110,120,200,.15);
+  }
+  .back:hover { background: #eef1fd; }
+  .level-badge {
+    background: #6a76c9; color: #fff; border-radius: 999px;
+    padding: 10px 24px; font-size: 18px; box-shadow: 0 3px 8px rgba(110,120,200,.25);
+  }
+  h1 { color: #6a76c9; font-size: 36px; margin: 18px 0 6px; text-shadow: 1px 1px 0 #fff; }
+  .subtitle { color: #8e97c4; font-size: 17px; margin-bottom: 18px; }
+  .panel {
+    background: #ffffff; border-radius: 24px;
+    border: 3px solid #dbe1fa;
+    box-shadow: 0 8px 22px rgba(110,120,200,.16);
+    padding: 34px 30px;
+    width: 100%; max-width: 720px; text-align: center;
+  }
+  .progress-outer {
+    background: #e9edfb; border-radius: 999px; height: 18px;
+    margin-bottom: 26px; overflow: hidden;
+  }
+  .progress-inner {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, #8fa8d9, #6a76c9);
+    border-radius: 999px; transition: width .35s ease;
+  }
+  .question {
+    font-size: 56px; font-weight: bold; color: #4a5590;
+    margin: 18px 0 24px; letter-spacing: 4px;
+  }
+  .answer-row { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+  input#answer {
+    font-size: 34px; width: 180px; text-align: center;
+    padding: 10px; border: 3px solid #d5dcf5; border-radius: 14px;
+    outline: none; color: #4a5590; background: #fdfdff;
+  }
+  input#answer:focus { border-color: #8fa8d9; }
+  button {
+    font-family: inherit; font-size: 20px;
+    padding: 12px 28px; border: none; border-radius: 14px;
+    cursor: pointer; color: #fff; background: #6a76c9;
+    transition: transform .15s ease, filter .15s ease;
+  }
+  button:hover { transform: translateY(-2px); filter: brightness(1.06); }
+  button:active { transform: translateY(1px); }
+  .btn-ok { background: #6fbf8e; }
+  .btn-next { background: #f0a868; }
+  .btn-reset { background: #c9a3c9; }
+  .msg { min-height: 36px; font-size: 22px; margin-top: 18px; font-weight: bold; }
+  .msg.good { color: #3f9a6b; }
+  .msg.bad { color: #d97a6a; }
+  .msg.info { color: #8e97c4; }
+  .stats { display: flex; gap: 22px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+  .stat { background: #f4f5fd; border-radius: 16px; padding: 12px 26px; min-width: 140px; }
+  .stat .v { font-size: 32px; font-weight: bold; color: #6a76c9; }
+  .stat .k { font-size: 15px; color: #8e97c4; margin-top: 2px; }
+  .help {
+    margin-top: 22px; background: #f7f8fe; border: 2px dashed #d5dcf5;
+    border-radius: 16px; padding: 14px 20px;
+    color: #7a83b0; font-size: 16px; line-height: 1.8; text-align: left; max-width: 720px;
+  }
+  .modal-mask {
+    position: fixed; inset: 0; background: rgba(80,85,140,.45);
+    display: none; align-items: center; justify-content: center; z-index: 10;
+  }
+  .modal-mask.show { display: flex; }
+  .modal {
+    background: #fff; border-radius: 26px; padding: 40px 50px;
+    text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,.25); max-width: 90%;
+  }
+  .modal h2 { color: #6a76c9; font-size: 34px; margin-bottom: 14px; }
+  .modal p { font-size: 20px; color: #5c6288; margin-bottom: 24px; line-height: 1.9; }
+  .level-select { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 8px; }
+  .lv-btn {
+    width: 52px; height: 52px; border-radius: 14px; border: none;
+    font-size: 22px; font-weight: bold; cursor: pointer;
+    background: #e9edfb; color: #8e97c4; font-family: inherit; padding: 0;
+  }
+  .lv-btn.unlocked { background: #6a76c9; color: #fff; }
+  .lv-btn:hover { transform: translateY(-2px); }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a class="back" href="game_hall.html">🏠 返回大厅</a>
+    <div class="level-badge">🏆 最高闯关：第 <span id="maxLevel">1</span> 关</div>
+  </div>
+  <h1>✖️ 乘法口诀闯关</h1>
+  <p class="subtitle">每一关都是一张口诀表，答对通关，一路闯到第 9 关！</p>
+
+  <div class="panel">
+    <div class="level-select" id="levelSelect"></div>
+    <div style="margin-top:20px">
+      <div class="progress-outer"><div class="progress-inner" id="progressBar"></div></div>
+      <div style="color:#8e97c4;font-size:17px;margin-bottom:8px">
+        第 <b id="curLevelLabel" style="color:#6a76c9">1</b> 关 · 第 <b id="qLabel" style="color:#6a76c9">1</b> / <span id="qTotal">6</span> 题
+      </div>
+      <div class="question" id="question">3 × 5 = ?</div>
+      <div class="answer-row">
+        <input id="answer" type="number" placeholder="?" autocomplete="off">
+        <button class="btn-ok" onclick="submitAnswer()">✅ 提交</button>
+        <button class="btn-reset" onclick="restartGame()">🔄 重新开始</button>
+      </div>
+      <div class="msg info" id="msg">选好关卡，输入答案开始闯关吧！</div>
+      <div class="stats">
+        <div class="stat"><div class="v" id="sRight">0</div><div class="k">本关答对</div></div>
+        <div class="stat"><div class="v" id="sWrong">0</div><div class="k">本关答错</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="help">
+    📖 游戏说明：<br>
+    1. 一共 9 关，第 1 关是“1的口诀”，第 2 关是“2的口诀”……一直闯到第 9 关！<br>
+    2. 每关 6 道题，答对进入下一题；答错会告诉你正确答案，记得记住它哦。<br>
+    3. 通关的关卡会被点亮，最高闯关进度自动保存，下次接着玩！全部通关有庆祝音乐 🎉
+  </div>
+
+  <div class="modal-mask" id="modalMask">
+    <div class="modal">
+      <h2 id="modalTitle">🎉 恭喜过关！</h2>
+      <p id="modalText"></p>
+      <button class="btn-next" id="modalBtn1" onclick="modalAction1()">下一关</button>
+      <button id="modalBtn2" onclick="closeModal()">继续挑战</button>
+    </div>
+  </div>
+
+<script>
+/* ============ 音效（Web Audio 生成） ============ */
+var audioCtx = null;
+function ensureAudio() {
+  if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
+  if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+}
+function tone(freq, start, dur, type, vol) {
+  if (!audioCtx) return;
+  var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+  o.type = type || "sine"; o.frequency.value = freq;
+  g.gain.setValueAtTime(vol || 0.18, audioCtx.currentTime + start);
+  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + start + dur);
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start(audioCtx.currentTime + start); o.stop(audioCtx.currentTime + start + dur + 0.05);
+}
+function sndCorrect() { ensureAudio(); tone(660, 0, .12); tone(880, .12, .18); }
+function sndWrong()   { ensureAudio(); tone(240, 0, .18, "square", .12); tone(180, .18, .22, "square", .12); }
+function sndLevel()   { ensureAudio(); [523, 659, 784].forEach(function (f, i) { tone(f, i * .12, .2); }); }
+function sndWin()     { ensureAudio(); [523, 523, 659, 784, 784, 1047].forEach(function (f, i) { tone(f, i * .13, .28); }); }
+
+/* ============ 游戏逻辑 ============ */
+var MAX_LEVEL = 9, Q_PER_LEVEL = 6;
+var LEVEL_KEY = "game_multiply_max_level";
+var curLevel = 1, maxLevel = 1;
+var questions = [], qIndex = 0, rightCount = 0, wrongCount = 0;
+var waitingNext = false, curAnswer = 0;
+
+function loadMaxLevel() {
+  maxLevel = parseInt(localStorage.getItem(LEVEL_KEY) || "1", 10);
+  if (isNaN(maxLevel) || maxLevel < 1) maxLevel = 1;
+  if (maxLevel > MAX_LEVEL) maxLevel = MAX_LEVEL;
+  document.getElementById("maxLevel").textContent = maxLevel;
+}
+function renderLevelSelect() {
+  var box = document.getElementById("levelSelect");
+  box.innerHTML = "";
+  for (var i = 1; i <= MAX_LEVEL; i++) {
+    (function (lv) {
+      var b = document.createElement("button");
+      b.className = "lv-btn" + (lv <= maxLevel ? " unlocked" : "");
+      b.textContent = lv;
+      b.title = lv <= maxLevel ? "第 " + lv + " 关（" + lv + " 的口诀）" : "尚未解锁";
+      if (lv > maxLevel) b.disabled = true;
+      if (lv === curLevel) b.style.outline = "3px solid #f0a868";
+      b.onclick = function () { startLevel(lv); };
+      box.appendChild(b);
+    })(i);
+  }
+}
+function makeQuestions(level) {
+  var pool = [];
+  for (var b = 1; b <= 9; b++) pool.push({ a: level, b: b });
+  pool.sort(function () { return Math.random() - 0.5; });
+  return pool.slice(0, Q_PER_LEVEL);
+}
+function startLevel(lv) {
+  curLevel = lv;
+  questions = makeQuestions(lv);
+  qIndex = 0; rightCount = 0; wrongCount = 0; waitingNext = false;
+  document.getElementById("sRight").textContent = 0;
+  document.getElementById("sWrong").textContent = 0;
+  document.getElementById("curLevelLabel").textContent = lv;
+  document.getElementById("qTotal").textContent = Q_PER_LEVEL;
+  renderLevelSelect();
+  showQuestion();
+}
+function showQuestion() {
+  var q = questions[qIndex];
+  curAnswer = q.a * q.b;
+  waitingNext = false;
+  document.getElementById("qLabel").textContent = qIndex + 1;
+  document.getElementById("progressBar").style.width = (qIndex / Q_PER_LEVEL * 100) + "%";
+  document.getElementById("question").textContent = q.a + " × " + q.b + " = ?";
+  document.getElementById("answer").value = "";
+  document.getElementById("answer").disabled = false;
+  setMsg("info", "想一想 " + q.a + " 的口诀，答案是多少呢？");
+  var btn = document.querySelector(".btn-ok");
+  btn.textContent = "✅ 提交";
+  btn.onclick = submitAnswer;
+  document.getElementById("answer").focus();
+}
+function setMsg(cls, txt) {
+  var m = document.getElementById("msg");
+  m.className = "msg " + cls; m.textContent = txt;
+}
+function submitAnswer() {
+  ensureAudio();
+  if (waitingNext) {
+    qIndex++;
+    if (qIndex >= Q_PER_LEVEL) levelDone(); else showQuestion();
+    return;
+  }
+  var v = document.getElementById("answer").value.trim();
+  if (v === "") { setMsg("bad", "先输入你的答案哦～"); return; }
+  var num = parseInt(v, 10);
+  if (num === curAnswer) {
+    rightCount++;
+    document.getElementById("sRight").textContent = rightCount;
+    setMsg("good", "🎉 答对了！" + questions[qIndex].a + " × " + questions[qIndex].b + " = " + curAnswer);
+    sndCorrect();
+    setTimeout(function () {
+      qIndex++;
+      if (qIndex >= Q_PER_LEVEL) levelDone(); else showQuestion();
+    }, 700);
+  } else {
+    wrongCount++;
+    document.getElementById("sWrong").textContent = wrongCount;
+    waitingNext = true;
+    document.getElementById("answer").disabled = true;
+    setMsg("bad", "答错了～ 正确答案是 " + curAnswer + "。记住口诀：" + questions[qIndex].a + " × " + questions[qIndex].b + " = " + curAnswer);
+    sndWrong();
+    setSubmitNext();
+  }
+}
+function setSubmitNext() {
+  // 答错后按钮临时变为“下一题”，点击继续
+  var btn = document.querySelector(".btn-ok");
+  btn.textContent = "➡️ 下一题";
+  btn.onclick = function () {
+    btn.textContent = "✅ 提交";
+    btn.onclick = submitAnswer;
+    qIndex++;
+    if (qIndex >= Q_PER_LEVEL) levelDone(); else showQuestion();
+  };
+}
+function levelDone() {
+  document.getElementById("progressBar").style.width = "100%";
+  // 保存进度
+  var next = curLevel + 1;
+  if (next > maxLevel && next <= MAX_LEVEL) {
+    maxLevel = next;
+    localStorage.setItem(LEVEL_KEY, String(maxLevel));
+    document.getElementById("maxLevel").textContent = maxLevel;
+    renderLevelSelect();
+  }
+  var isFinal = curLevel === MAX_LEVEL;
+  if (isFinal) {
+    sndWin();
+    var totalRight = rightCount, totalWrong = wrongCount;
+    document.getElementById("modalTitle").innerHTML = "🏆🏆 全部通关！你太厉害了！";
+    document.getElementById("modalText").innerHTML =
+      "你闯过了全部 9 关，成为乘法口诀小达人！<br>本关答对 " + totalRight + " 题，答错 " + totalWrong + " 题。<br>🎧 听！这是为你演奏的庆祝音乐～";
+    document.getElementById("modalBtn1").style.display = "none";
+    document.getElementById("modalBtn2").textContent = "再玩一遍";
+    document.getElementById("modalMask").classList.add("show");
+    startLevel(1);
+  } else {
+    sndLevel();
+    document.getElementById("modalTitle").innerHTML = "🎉 恭喜通过第 " + curLevel + " 关！";
+    document.getElementById("modalText").innerHTML =
+      "本关答对 " + rightCount + " 题，答错 " + wrongCount + " 题。<br>下一关是「" + next + " 的口诀」，准备好了吗？";
+    document.getElementById("modalBtn1").style.display = "";
+    document.getElementById("modalBtn1").textContent = "下一关";
+    document.getElementById("modalBtn2").textContent = "继续挑战";
+    document.getElementById("modalMask").classList.add("show");
+  }
+}
+function modalAction1() {
+  closeModal();
+  startLevel(curLevel + 1);
+}
+function restartGame() { closeModal(); startLevel(curLevel); }
+function closeModal() { document.getElementById("modalMask").classList.remove("show"); }
+
+document.getElementById("answer").addEventListener("keydown", function (e) { if (e.key === "Enter") submitAnswer(); });
+
+loadMaxLevel();
+renderLevelSelect();
+startLevel(maxLevel > 1 ? 1 : 1);
+</script>
+</body>
+</html>
