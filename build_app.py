@@ -145,10 +145,12 @@ def make_icons():
 # ============================================================
 # 2. 注入 PWA 标签
 # ============================================================
+# 注意：这里故意不加 <meta name="apple-mobile-web-app-capable" content="yes">。
+# iOS 主屏幕(standalone)模式下录音不可靠，是 WebKit 的已知缺陷（bug #300342，iOS 26 仍在）：
+# 表现为首次能录音、之后失效，需重启手机才能恢复。不加该标签时，iOS 从主屏图标打开会在
+# Safari 中运行，录音正常，桌面图标照旧存在。安卓走 manifest 的 display:standalone，仍是全屏。
 PWA_HEAD = """<meta name="theme-color" content="{theme}">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <link rel="manifest" href="./manifest.json">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">

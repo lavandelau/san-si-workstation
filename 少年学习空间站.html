@@ -3260,6 +3260,16 @@ const RECITE_ENABLED = true;
 
 /* 录音环境检查：https 或 localhost/127.0.0.1 本地服务均为安全环境；file:// 不行 */
 function micEnvCheck(){
+  /* iPhone/iPad 的「主屏幕 APP 模式」录音不可靠（WebKit 已知缺陷）：提示改用 Safari 打开 */
+  if(window.navigator.standalone === true){
+    return `
+      <div class="mic-alert-line" style="text-align:center;font-size:16px;font-weight:bold;color:#D32F2F">【录音启动失败】</div>
+      <div class="mic-alert-divide"></div>
+      <div class="mic-alert-line">⚠️ 检测到当前运行在 <b>主屏幕 APP 模式</b>，iPhone / iPad 在该模式下录音不稳定。</div>
+      <div class="mic-alert-line">⚠️ 请点击屏幕右上角 <b>「⋯」→「在 Safari 中打开」</b>，再重新点击录音按钮即可。</div>
+      <div class="mic-alert-line">⚠️ 学习、练习、背诗等其他功能不受影响，均可正常使用。</div>
+    `;
+  }
   if(location.protocol === 'https:') return null;
   if(window.isSecureContext) return null;   /* 覆盖 http://localhost 和 http://127.0.0.1 */
   const proto = location.protocol === 'file:' ? '本地文件（file://）' : (location.protocol.replace(':','') || '未知协议');
