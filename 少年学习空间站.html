@@ -490,6 +490,55 @@ label{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;displa
 .confetti-piece{position:absolute;width:10px;height:14px;border-radius:2px;opacity:0;animation:confettiFly 1.3s cubic-bezier(.2,.6,.4,1) forwards}
 @keyframes confettiFly{0%{opacity:1;transform:translate(0,0) rotate(0)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--r))}}
 
+/* ========== FUN GAMES 趣味小游戏厅 ========== */
+.fg-hub{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.fg-game-card{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:26px 16px;border-radius:16px;cursor:pointer;transition:transform .2s,box-shadow .2s}
+.fg-game-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.fg-game-card:active{transform:scale(.97)}
+.fg-game-card .fg-gc-icon{font-size:52px;line-height:1}
+.fg-game-card .fg-gc-title{font-size:17px;font-weight:800}
+.fg-game-card .fg-gc-desc{font-size:12px;color:var(--text2);line-height:1.6}
+.fg-game-card .fg-gc-tag{margin-top:6px;font-size:11px;color:var(--text2);background:rgba(255,255,255,.75);border-radius:999px;padding:4px 12px}
+.fg-gc-24{background:#FFF3E4}.fg-gc-24 .fg-gc-title{color:var(--orange)}
+.fg-gc-mem{background:#E6F7EE}.fg-gc-mem .fg-gc-title{color:#3D9E6B}
+.fg-gc-mul{background:#ECEFFD}.fg-gc-mul .fg-gc-title{color:var(--purple)}
+.fg-stage-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.fg-stage-title{font-size:18px;font-weight:800}
+.fg-subtitle{text-align:center;color:var(--text2);font-size:13px;margin-bottom:16px}
+.fg-nums{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin:14px 0 20px}
+.fg-num{width:84px;height:84px;background:linear-gradient(145deg,#FFD9A8,#F5B36B);border:3px solid #fff;border-radius:18px;box-shadow:0 5px 12px rgba(200,140,80,.25);display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:800;color:#A05A2C}
+.fg-msg{min-height:32px;font-size:17px;font-weight:700;text-align:center;margin-top:14px}
+.fg-msg.good{color:#3D9E6B}.fg-msg.bad{color:var(--red)}.fg-msg.info{color:var(--text2)}
+.fg-btn-row{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+.fg-stats{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:16px}
+.fg-stat{background:var(--bg);border-radius:12px;padding:10px 20px;text-align:center;min-width:110px}
+.fg-stat .v{font-size:26px;font-weight:800}
+.fg-stat .k{font-size:11px;color:var(--text2);margin-top:2px}
+.fg-expr{max-width:320px;margin:0 auto;text-align:center;font-size:22px;display:block}
+.fg-mem-board{display:grid;gap:10px;justify-content:center;margin:16px 0}
+.fg-mem-card{width:78px;height:78px;perspective:600px;cursor:pointer}
+.fg-mem-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .4s;border-radius:14px}
+.fg-mem-card.flipped .fg-mem-inner,.fg-mem-card.matched .fg-mem-inner{transform:rotateY(180deg)}
+.fg-mem-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:14px;display:flex;align-items:center;justify-content:center;border:3px solid #fff}
+.fg-mem-face.front{background:linear-gradient(135deg,#7FD8C8,#4ECDC4);font-size:32px;color:#fff;box-shadow:0 4px 10px rgba(60,160,150,.25)}
+.fg-mem-face.back{background:#FFF9EC;transform:rotateY(180deg);font-size:40px;box-shadow:0 4px 10px rgba(180,150,90,.18)}
+.fg-mem-card.matched .fg-mem-face.back{background:#E9F9EE;border-color:#9FD4B4}
+.fg-mem-card.matched{animation:fgPop .4s ease}
+@keyframes fgPop{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+.fg-diff-group{display:flex;gap:6px;align-items:center;justify-content:center;background:var(--bg);border-radius:999px;padding:5px 10px}
+.fg-diff-btn{border:none;border-radius:999px;padding:8px 18px;font-size:13px;font-weight:600;cursor:pointer;background:transparent;color:var(--text2);min-height:36px}
+.fg-diff-btn.active{background:var(--cyan);color:#fff}
+.fg-lv-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:16px}
+.fg-lv-btn{width:48px;height:48px;border-radius:12px;border:none;font-size:20px;font-weight:800;cursor:pointer;background:var(--bg);color:var(--text2)}
+.fg-lv-btn.unlocked{background:var(--purple);color:#fff}
+.fg-lv-btn.cur{outline:3px solid var(--orange)}
+.fg-progress-outer{background:var(--bg);border-radius:999px;height:14px;overflow:hidden;margin-bottom:10px}
+.fg-progress-inner{height:100%;width:0%;background:linear-gradient(90deg,#8fa8d9,#6a76c9);border-radius:999px;transition:width .35s ease}
+.fg-question{font-size:42px;font-weight:800;color:var(--purple);text-align:center;letter-spacing:4px;margin:14px 0}
+.fg-answer-row{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.fg-answer-input{font-size:26px;width:160px;text-align:center;padding:8px}
+.fg-win-box{background:linear-gradient(145deg,#FFF8E1,#FFFDF5);border:2px solid var(--yellow);border-radius:14px;padding:18px;text-align:center;font-size:15px;font-weight:700;margin-top:16px;line-height:2}
+
 /* ========== Responsive ========== */
 @media(max-width:768px){
   .sidebar{display:block;transform:translateX(-100%);transition:transform .25s ease;width:230px;box-shadow:4px 0 24px rgba(0,0,0,.25);padding-top:56px}
@@ -529,6 +578,14 @@ label{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;displa
   .idiom-grid{grid-template-columns:1fr}
   .idiom-detail-box .idb-idiom{font-size:20px}
   .star-rating span{font-size:18px}
+}
+@media(max-width:768px){
+  .fg-hub{grid-template-columns:1fr}
+  .fg-num{width:62px;height:62px;font-size:30px;border-radius:14px}
+  .fg-mem-card{width:62px;height:62px}
+  .fg-mem-face.front{font-size:24px}
+  .fg-mem-face.back{font-size:30px}
+  .fg-question{font-size:32px;letter-spacing:2px}
 }
 </style>
 </head>
@@ -837,10 +894,15 @@ label{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;displa
 <!-- ===== Games Section ===== -->
 <section class="content-section" id="section-games">
   <div class="section-title"><span class="emoji">🎮</span>趣味小游戏<span style="font-size:12px;font-weight:400;color:var(--text2);margin-left:8px">24点口算 · 记忆翻牌 · 乘法闯关</span></div>
-  <div class="card" style="text-align:center;padding:40px 24px">
-    <div style="font-size:20px;font-weight:700;color:var(--text);margin-bottom:12px">去游戏大厅里选择喜欢的游戏吧 🎉</div>
-    <div style="font-size:15px;color:var(--text2);margin-bottom:24px">这里可以直接打开刚刚生成的小学生小游戏套件。</div>
-    <a class="btn btn-primary" href="./game_hall.html" style="font-size:18px;padding:14px 36px" target="_blank" rel="noopener noreferrer">🚀 打开游戏大厅</a>
+  <div class="card" id="fgWrap"></div>
+  <div class="card">
+    <div class="card-title"><span class="emoji">📖</span>玩法小贴士</div>
+    <div class="hint-text">
+      🧮 <b>24点口算</b>：用给出的 4 个数字各用一次，通过 + − × ÷ 和括号算出 24，算不出来可以点提示。<br>
+      🃏 <b>记忆翻牌</b>：翻开两张卡片找相同的好朋友，用最少的步数完成全部配对。<br>
+      ✖️ <b>乘法口诀闯关</b>：每关 6 题，答对通关，一路闯到第 9 关成为口诀小达人。<br>
+      ⭐ 玩游戏也能赚星星喂宠物哦（每个游戏每天有星星上限，劳逸结合～）
+    </div>
   </div>
 </section>
 
@@ -1516,6 +1578,7 @@ function defaultState(){
     badges:[],
     errors:[],
     redoStats:{killed:0,rounds:0},
+    games:{},             /* 趣味小游戏：各游戏最佳成绩 + 每日星星领取计数 */
     links:[],
     dailyTasks:{},
     dailyActions:{},     /* 任意学习行为计数：做题、阅读打卡等 */
@@ -1532,6 +1595,7 @@ function defaultState(){
       adventure:{levels:0,best:0},
       reading:{solved:0,correct:0},
       idiom:{solved:0,correct:0},
+      games:{played:0,correct:0},
       booklog:{entries:0,pages:0,minutes:0}
     },
     pomodoro:{focus:30,rest:10,todayCount:0,totalCount:0,todayDate:''},
@@ -1686,6 +1750,7 @@ const badgeDefs = [
   {id:'idiom_master', name:'成语达人', desc:'成语闯关答对15题', icon:'💎', cond:s=>(s.progress.idiom?s.progress.idiom.correct:0)>=15},
   {id:'book_worm', name:'书香少年', desc:'课外阅读打卡5次', icon:'📖', cond:s=>(s.books?s.books.length:0)>=5},
   {id:'book_champion', name:'阅读冠军', desc:'课外阅读打卡15次', icon:'🏆', cond:s=>(s.books?s.books.length:0)>=15},
+  {id:'game_master', name:'游戏小达人', desc:'小游戏答对30题', icon:'🎮', cond:s=>(s.progress.games?s.progress.games.correct:0)>=30},
 ];
 
 function checkBadges(){
@@ -2242,6 +2307,7 @@ function switchSection(name){
   else if(name==='math') renderMath(mathCat);
   else if(name==='thinking') renderThinking();
   else if(name==='adventure') renderAdventure();
+  else if(name==='games') fgRenderHub();
   else if(name==='errors'){ renderErrors(); renderRedoPanel(); }
   else if(name==='links') renderLinks();
   else if(name==='pet') renderPet();
@@ -6515,9 +6581,552 @@ function clearAllData(){
 }
 
 /* ================================================================
+   FUN GAMES 趣味小游戏厅（24点 / 记忆翻牌 / 乘法闯关 站内直玩）
+   原 game_24.html / game_memory.html / game_multiply.html 整合版
+   ================================================================ */
+
+/* ---------- 状态初始化 & 独立版成绩迁移 ---------- */
+function fgEnsureState(){
+  if(!state.progress.games) state.progress.games = {played:0, correct:0};
+  if(!state.games) state.games = {};
+  const g = state.games;
+  if(!g.g24) g.g24 = {best:0};
+  if(!g.mem) g.mem = {easy:0, normal:0};
+  if(!g.mul) g.mul = {maxLevel:1};
+  if(!g.daily || g.daily.date !== todayStr()) g.daily = {date:todayStr(), g24:0, mem:0, mul:0};
+  /* 一次性导入独立小游戏的历史成绩（同源 localStorage） */
+  if(!g.migrated){
+    g.migrated = true;
+    try{
+      const b24 = parseInt(localStorage.getItem('game24_best_correct')||'0',10);
+      if(b24 > g.g24.best) g.g24.best = b24;
+      const me = parseInt(localStorage.getItem('game_memory_best_easy')||'0',10);
+      const mn = parseInt(localStorage.getItem('game_memory_best_normal')||'0',10);
+      if(me && (!g.mem.easy || me < g.mem.easy)) g.mem.easy = me;
+      if(mn && (!g.mem.normal || mn < g.mem.normal)) g.mem.normal = mn;
+      const ml = parseInt(localStorage.getItem('game_multiply_max_level')||'0',10);
+      if(ml > g.mul.maxLevel) g.mul.maxLevel = Math.min(9, Math.max(1, ml));
+    }catch(e){}
+    saveState();
+  }
+}
+
+/* ---------- 星星奖励（每日分游戏上限，防刷） ---------- */
+function fgAward(kind, stars, cap){
+  fgEnsureState();
+  const d = state.games.daily;
+  const got = Math.max(0, Math.min(stars, cap - d[kind]));
+  d[kind] += got;
+  if(got > 0){
+    addStars(got);
+    addPetExp(got, 'games');
+    recordStudyAction(1);
+  }
+  saveState();
+  checkBadges();
+  return got;
+}
+
+/* ---------- 音效（Web Audio 生成，无外部文件） ---------- */
+let fgAudioCtx = null;
+function fgEnsureAudio(){
+  if(!fgAudioCtx){ try{ fgAudioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
+  if(fgAudioCtx && fgAudioCtx.state === 'suspended') fgAudioCtx.resume();
+}
+function fgTone(freq, start, dur, type, vol){
+  if(!fgAudioCtx) return;
+  const o = fgAudioCtx.createOscillator(), g = fgAudioCtx.createGain();
+  o.type = type||'sine'; o.frequency.value = freq;
+  g.gain.setValueAtTime(vol||0.18, fgAudioCtx.currentTime+start);
+  g.gain.exponentialRampToValueAtTime(0.001, fgAudioCtx.currentTime+start+dur);
+  o.connect(g); g.connect(fgAudioCtx.destination);
+  o.start(fgAudioCtx.currentTime+start); o.stop(fgAudioCtx.currentTime+start+dur+0.05);
+}
+function fgSndCorrect(){ fgEnsureAudio(); fgTone(660,0,.12); fgTone(880,.12,.18); }
+function fgSndWrong(){ fgEnsureAudio(); fgTone(240,0,.18,'square',.12); fgTone(180,.18,.22,'square',.12); }
+function fgSndWin(){ fgEnsureAudio(); [523,659,784,1047].forEach((f,i)=>fgTone(f,i*.15,.3)); }
+function fgSndLevel(){ fgEnsureAudio(); [523,659,784].forEach((f,i)=>fgTone(f,i*.12,.2)); }
+function fgSndFlip(){ fgEnsureAudio(); fgTone(520,0,.08,'triangle',.12); }
+function fgSndMatch(){ fgEnsureAudio(); fgTone(660,0,.1); fgTone(880,.1,.15); }
+function fgSndMiss(){ fgEnsureAudio(); fgTone(260,0,.12,'square',.1); }
+
+/* ---------- 游戏大厅 ---------- */
+function fgRenderHub(){
+  fgEnsureState();
+  const g = state.games;
+  document.getElementById('fgWrap').innerHTML = `
+    <div class="fg-hub">
+      <div class="fg-game-card fg-gc-24" onclick="fgShow24()">
+        <div class="fg-gc-icon">🧮</div>
+        <div class="fg-gc-title">24点口算</div>
+        <div class="fg-gc-desc">4个数字加减乘除算出24，锻炼口算小脑筋</div>
+        <div class="fg-gc-tag">🏆 最高连对 ${g.g24.best} 题</div>
+      </div>
+      <div class="fg-game-card fg-gc-mem" onclick="fgShowMem()">
+        <div class="fg-gc-icon">🃏</div>
+        <div class="fg-gc-title">记忆翻牌</div>
+        <div class="fg-gc-desc">翻牌找出相同的好朋友，比比谁步数最少</div>
+        <div class="fg-gc-tag">🎯 最佳：简单 ${g.mem.easy?g.mem.easy+'步':'—'} / 普通 ${g.mem.normal?g.mem.normal+'步':'—'}</div>
+      </div>
+      <div class="fg-game-card fg-gc-mul" onclick="fgShowMul()">
+        <div class="fg-gc-icon">✖️</div>
+        <div class="fg-gc-title">乘法口诀闯关</div>
+        <div class="fg-gc-desc">九九口诀逐关挑战，一路闯到第9关</div>
+        <div class="fg-gc-tag">🏆 最高闯到第 ${g.mul.maxLevel} 关</div>
+      </div>
+    </div>`;
+}
+function fgStageTop(icon, title){
+  return `<div class="fg-stage-top">
+    <button class="btn btn-outline btn-sm" onclick="fgRenderHub()">🏠 返回游戏列表</button>
+    <div class="fg-stage-title">${icon} ${title}</div>
+  </div>`;
+}
+
+/* ================================================================
+   游戏1：24点口算
+   ================================================================ */
+let fg24Nums = [], fg24Solution = null, fg24Correct = 0, fg24Wrong = 0, fg24QCount = 0, fg24Solved = false;
+
+function fgSolve24(nums){
+  const eps = 1e-6, ops = ['+','-','*','/'];
+  function rec(vals, exprs, intOnly){
+    if(vals.length === 1){
+      if(Math.abs(vals[0]-24) < eps) return exprs[0];
+      return null;
+    }
+    for(let i=0;i<vals.length;i++){
+      for(let j=0;j<vals.length;j++){
+        if(i===j) continue;
+        const rv=[], re=[];
+        for(let k=0;k<vals.length;k++){
+          if(k!==i && k!==j){ rv.push(vals[k]); re.push(exprs[k]); }
+        }
+        for(let oi=0;oi<ops.length;oi++){
+          const op = ops[oi];
+          let v, e;
+          if(op==='/' && Math.abs(vals[j])<eps) continue;
+          if(op==='+'){ v = vals[i]+vals[j]; e = '('+exprs[i]+'+'+exprs[j]+')'; }
+          if(op==='-'){ v = vals[i]-vals[j]; e = '('+exprs[i]+'-'+exprs[j]+')'; }
+          if(op==='*'){ v = vals[i]*vals[j]; e = '('+exprs[i]+'*'+exprs[j]+')'; }
+          if(op==='/'){ v = vals[i]/vals[j]; e = '('+exprs[i]+'/'+exprs[j]+')'; }
+          if(intOnly){
+            if(Math.abs(v-Math.round(v))>eps) continue;
+            if(v<0) continue;
+          }
+          const r = rec(rv.concat([v]), re.concat([e]), intOnly);
+          if(r) return r;
+        }
+      }
+    }
+    return null;
+  }
+  return rec(nums.slice(), nums.map(String), true) || rec(nums.slice(), nums.map(String), false);
+}
+function fgPrettyExpr(e){
+  return e.replace(/\*/g,' × ').replace(/\//g,' ÷ ').replace(/\+/g,' + ').replace(/-/g,' - ')
+          .replace(/\s+/g,' ').replace(/\( /g,'(').replace(/ \)/g,')');
+}
+function fg24SetMsg(cls, txt){
+  const m = document.getElementById('fg24Msg');
+  if(!m) return;
+  m.className = 'fg-msg '+cls; m.textContent = txt;
+}
+function fgShow24(){
+  fgEnsureState();
+  fg24Correct = 0; fg24Wrong = 0; fg24QCount = 0;
+  document.getElementById('fgWrap').innerHTML = fgStageTop('🧮','24点口算') + `
+    <div class="fg-subtitle">用下面 4 个数字，每个只用一次，加减乘除算出 24！</div>
+    <div class="fg-nums" id="fg24Nums"></div>
+    <input class="input fg-expr" id="fg24Expr" placeholder="例如：(3+5)×2+8" autocomplete="off">
+    <div class="fg-btn-row">
+      <button class="btn btn-primary" onclick="fg24Submit()">✅ 检查答案</button>
+      <button class="btn btn-purple" onclick="fg24Hint()">💡 提示</button>
+      <button class="btn btn-orange" onclick="fg24Next()">➡️ 下一题</button>
+      <button class="btn btn-outline" onclick="fg24Reset()">🔄 重新开始</button>
+    </div>
+    <div class="fg-msg info" id="fg24Msg">填好算式后点"检查答案"吧！</div>
+    <div class="fg-stats">
+      <div class="fg-stat"><div class="v" style="color:var(--orange)" id="fg24Correct">0</div><div class="k">本轮答对</div></div>
+      <div class="fg-stat"><div class="v" style="color:var(--red)" id="fg24Wrong">0</div><div class="k">本轮答错</div></div>
+      <div class="fg-stat"><div class="v" style="color:var(--yellow)" id="fg24Best">0</div><div class="k">历史最高连对</div></div>
+    </div>`;
+  document.getElementById('fg24Best').textContent = state.games.g24.best;
+  const inp = document.getElementById('fg24Expr');
+  inp.addEventListener('keydown', e=>{ if(e.key==='Enter') fg24Submit(); });
+  fg24Gen();
+}
+function fg24Gen(){
+  let tries = 0;
+  do{
+    fg24Nums = [];
+    for(let i=0;i<4;i++) fg24Nums.push(1+Math.floor(Math.random()*10));
+    tries++;
+  }while(!fgSolve24(fg24Nums) && tries < 500);
+  fg24Solution = fgSolve24(fg24Nums);
+  fg24Solved = false;
+  fg24QCount++;
+  const box = document.getElementById('fg24Nums');
+  if(!box) return;
+  box.innerHTML = '';
+  fg24Nums.forEach(n=>{
+    const d = document.createElement('div');
+    d.className = 'fg-num'; d.textContent = n;
+    box.appendChild(d);
+  });
+  const inp = document.getElementById('fg24Expr');
+  if(inp){ inp.value = ''; inp.focus(); }
+  fg24SetMsg('info', '想一想：这 4 个数字怎么算出 24 呢？');
+}
+function fg24Submit(){
+  fgEnsureAudio();
+  if(fg24Solved){ fg24SetMsg('info', '这题已经答对啦，点"下一题"继续挑战！'); return; }
+  const inp = document.getElementById('fg24Expr');
+  if(!inp) return;
+  const raw = inp.value.trim();
+  if(!raw){ fg24SetMsg('bad', '先在框里填上你的算式哦～'); return; }
+  const norm = raw.replace(/×/g,'*').replace(/÷/g,'/').replace(/（/g,'(').replace(/）/g,')').replace(/\s+/g,'');
+  if(!/^[0-9+\-*/().]+$/.test(norm)){ fg24SetMsg('bad', '算式里只能有数字和 + - * / ( ) 哦～'); fgSndWrong(); return; }
+  const used = norm.match(/\d+/g) || [];
+  const given = fg24Nums.map(String).sort().join(',');
+  if(used.sort().join(',') !== given){ fg24SetMsg('bad', '要把给出的 4 个数字每个都用一次，且只用一次哦！'); fgSndWrong(); return; }
+  let val;
+  try{ val = Function('return ('+norm+')')(); }catch(e){ val = NaN; }
+  if(typeof val !== 'number' || !isFinite(val)){ fg24SetMsg('bad', '这个算式好像不太对，再检查一下括号？'); fgSndWrong(); return; }
+  if(Math.abs(val-24) < 1e-6){
+    fg24Solved = true; fg24Correct++;
+    state.progress.games.correct++;
+    const got = fgAward('g24', 2, 10);
+    document.getElementById('fg24Correct').textContent = fg24Correct;
+    if(fg24Correct > state.games.g24.best){
+      state.games.g24.best = fg24Correct;
+      saveState();
+      document.getElementById('fg24Best').textContent = fg24Correct;
+      fg24SetMsg('good', '🎉 完全正确！你打破了历史最高纪录！连对 '+fg24Correct+' 题'+(got>0?'，+'+got+' ⭐':''));
+      burstConfetti();
+      showToast('🎉 24点新纪录：连对 '+fg24Correct+' 题！');
+    }else{
+      fg24SetMsg('good', '🎉 答对了！真厉害！累计答对 '+fg24Correct+' 题'+(got>0?'，+'+got+' ⭐':'')+'。');
+    }
+    fgSndCorrect();
+  }else{
+    fg24Wrong++;
+    document.getElementById('fg24Wrong').textContent = fg24Wrong;
+    fg24SetMsg('bad', '结果等于 '+Math.round(val*100)/100+'，不是 24 哦，再试试！');
+    fgSndWrong();
+  }
+}
+function fg24Hint(){
+  fgEnsureAudio();
+  if(!fg24Solution) fg24Solution = fgSolve24(fg24Nums);
+  fg24SetMsg('info', '💡 提示：'+fgPrettyExpr(fg24Solution)+' = 24（要自己再算一遍加深记忆哦！）');
+  fgTone(740,0,.1); fgTone(740,.13,.1);
+}
+function fg24Next(){ fg24Gen(); }
+function fg24Reset(){
+  fg24Correct = 0; fg24Wrong = 0; fg24QCount = 0;
+  const c = document.getElementById('fg24Correct'), w = document.getElementById('fg24Wrong');
+  if(c) c.textContent = 0;
+  if(w) w.textContent = 0;
+  fg24Gen();
+  fg24SetMsg('info', '重新开始！加油！');
+}
+
+/* ================================================================
+   游戏2：记忆翻牌
+   ================================================================ */
+const FG_MEM_EMOJIS = ['🐶','🐱','🐰','🐼','🦁','🐸','🐧','🦋','🌟','🍎'];
+const FG_MEM_PAIRS = {easy:4, normal:8};
+let fgMemDiff = 'easy', fgMemFirst = null, fgMemSecond = null, fgMemLock = false, fgMemSteps = 0, fgMemMatched = 0;
+
+function fgShowMem(){
+  fgEnsureState();
+  document.getElementById('fgWrap').innerHTML = fgStageTop('🃏','记忆翻牌') + `
+    <div class="fg-subtitle">点开两张卡片，找到一对相同的好朋友！</div>
+    <div class="tc" style="margin-bottom:12px">
+      <div class="fg-diff-group" style="display:inline-flex">
+        <span style="font-size:13px;color:var(--text2)">难度：</span>
+        <button class="fg-diff-btn ${fgMemDiff==='easy'?'active':''}" id="fgMemEasyBtn" onclick="fgMemSetDiff('easy')">简单 (4对)</button>
+        <button class="fg-diff-btn ${fgMemDiff==='normal'?'active':''}" id="fgMemNormalBtn" onclick="fgMemSetDiff('normal')">普通 (8对)</button>
+      </div>
+    </div>
+    <div class="fg-stats">
+      <div class="fg-stat"><div class="v" style="color:var(--cyan)" id="fgMemPairs">0</div><div class="k">已配对</div></div>
+      <div class="fg-stat"><div class="v" style="color:var(--orange)" id="fgMemSteps">0</div><div class="k">总步数</div></div>
+      <div class="fg-stat"><div class="v" style="color:var(--yellow)" id="fgMemBest">-</div><div class="k">最佳步数</div></div>
+    </div>
+    <div class="fg-mem-board" id="fgMemBoard"></div>
+    <div class="fg-btn-row">
+      <button class="btn btn-primary" onclick="fgMemStart()">🔄 重新开始</button>
+    </div>
+    <div id="fgMemResult"></div>`;
+  fgMemLoadBest();
+  fgMemStart();
+}
+function fgMemLoadBest(){
+  const v = state.games.mem[fgMemDiff];
+  const el = document.getElementById('fgMemBest');
+  if(el) el.textContent = v ? v+' 步' : '暂无记录';
+}
+function fgMemSetDiff(d){
+  fgMemDiff = d;
+  const be = document.getElementById('fgMemEasyBtn'), bn = document.getElementById('fgMemNormalBtn');
+  if(be) be.classList.toggle('active', d==='easy');
+  if(bn) bn.classList.toggle('active', d==='normal');
+  fgMemLoadBest();
+  fgMemStart();
+}
+function fgMemStart(){
+  fgEnsureState();
+  const n = FG_MEM_PAIRS[fgMemDiff];
+  const picks = FG_MEM_EMOJIS.slice(0, n);
+  const deck = picks.concat(picks);
+  for(let i=deck.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    const t = deck[i]; deck[i] = deck[j]; deck[j] = t;
+  }
+  fgMemSteps = 0; fgMemMatched = 0; fgMemFirst = null; fgMemSecond = null; fgMemLock = false;
+  const s = document.getElementById('fgMemSteps'), p = document.getElementById('fgMemPairs'), r = document.getElementById('fgMemResult');
+  if(s) s.textContent = 0;
+  if(p) p.textContent = '0 / '+n;
+  if(r) r.innerHTML = '';
+  const board = document.getElementById('fgMemBoard');
+  if(!board) return;
+  board.innerHTML = '';
+  board.style.gridTemplateColumns = 'repeat(4, 78px)';
+  deck.forEach(emoji=>{
+    const c = document.createElement('div');
+    c.className = 'fg-mem-card';
+    c.dataset.emoji = emoji;
+    c.innerHTML = '<div class="fg-mem-inner"><div class="fg-mem-face front">❓</div><div class="fg-mem-face back">'+emoji+'</div></div>';
+    c.addEventListener('click', ()=>fgMemFlip(c));
+    board.appendChild(c);
+  });
+}
+function fgMemFlip(card){
+  if(fgMemLock || card===fgMemFirst || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+  fgEnsureAudio();
+  card.classList.add('flipped');
+  fgSndFlip();
+  if(!fgMemFirst){ fgMemFirst = card; return; }
+  fgMemSecond = card;
+  fgMemSteps++;
+  const s = document.getElementById('fgMemSteps');
+  if(s) s.textContent = fgMemSteps;
+  fgMemLock = true;
+  if(fgMemFirst.dataset.emoji === fgMemSecond.dataset.emoji){
+    const a = fgMemFirst, b = fgMemSecond;
+    setTimeout(()=>{
+      a.classList.remove('flipped'); b.classList.remove('flipped');
+      a.classList.add('matched'); b.classList.add('matched');
+      fgMemMatched++;
+      const p = document.getElementById('fgMemPairs');
+      if(p) p.textContent = fgMemMatched+' / '+FG_MEM_PAIRS[fgMemDiff];
+      fgSndMatch();
+      fgMemFirst = null; fgMemSecond = null; fgMemLock = false;
+      if(fgMemMatched === FG_MEM_PAIRS[fgMemDiff]) fgMemWin();
+    }, 350);
+  }else{
+    const a = fgMemFirst, b = fgMemSecond;
+    setTimeout(()=>{
+      a.classList.remove('flipped'); b.classList.remove('flipped');
+      fgSndMiss();
+      fgMemFirst = null; fgMemSecond = null; fgMemLock = false;
+    }, 850);
+  }
+}
+function fgMemWin(){
+  fgSndWin();
+  burstConfetti();
+  const n = FG_MEM_PAIRS[fgMemDiff];
+  const old = state.games.mem[fgMemDiff];
+  const isRecord = !old || fgMemSteps < old;
+  if(isRecord) state.games.mem[fgMemDiff] = fgMemSteps;
+  const got = fgAward('mem', fgMemDiff==='normal'?3:2, 6);
+  state.progress.games.played++;
+  saveState();
+  fgMemLoadBest();
+  const r = document.getElementById('fgMemResult');
+  if(r){
+    r.innerHTML = `<div class="fg-win-box">🎉 全部配对成功！<br>
+      你用了 <b>${fgMemSteps}</b> 步完成了 ${n} 对配对${isRecord?'，<br>🏆 创造了新的最佳纪录！':'（当前最佳 '+Math.min(old||9999, fgMemSteps)+' 步）'}<br>
+      ${got>0?'+'+got+' ⭐ 已存入小金库～':'今天这个游戏的星星已经领满啦，明天再来！'}</div>`;
+  }
+  showToast('🃏 记忆翻牌完成：'+fgMemSteps+' 步！');
+}
+
+/* ================================================================
+   游戏3：乘法口诀闯关
+   ================================================================ */
+const FG_MUL_MAX = 9, FG_MUL_Q = 6;
+let fgMulLevel = 1, fgMulQuestions = [], fgMulQIndex = 0, fgMulRight = 0, fgMulWrong = 0, fgMulWaiting = false, fgMulAnswer = 0;
+
+function fgShowMul(){
+  fgEnsureState();
+  fgMulLevel = 1;
+  document.getElementById('fgWrap').innerHTML = fgStageTop('✖️','乘法口诀闯关') + `
+    <div class="fg-subtitle">每一关都是一张口诀表，答对通关，一路闯到第 9 关！</div>
+    <div class="tc" style="margin-bottom:8px;font-size:13px;color:var(--text2)">🏆 最高闯关：第 <b style="color:var(--purple)" id="fgMulMax">${state.games.mul.maxLevel}</b> 关</div>
+    <div class="fg-lv-row" id="fgMulLevels"></div>
+    <div class="fg-progress-outer"><div class="fg-progress-inner" id="fgMulBar"></div></div>
+    <div class="tc" style="color:var(--text2);font-size:13px;margin-bottom:6px">
+      第 <b style="color:var(--purple)" id="fgMulCur">1</b> 关 · 第 <b style="color:var(--purple)" id="fgMulQLabel">1</b> / <span id="fgMulQTotal">6</span> 题
+    </div>
+    <div class="fg-question" id="fgMulQuestion">3 × 5 = ?</div>
+    <div class="fg-answer-row">
+      <input class="input fg-answer-input" id="fgMulAnswer" type="number" placeholder="?" autocomplete="off">
+      <button class="btn btn-primary" id="fgMulBtn" onclick="fgMulSubmit()">✅ 提交</button>
+      <button class="btn btn-outline" onclick="fgMulRestart()">🔄 重新开始</button>
+    </div>
+    <div class="fg-msg info" id="fgMulMsg">选好关卡，输入答案开始闯关吧！</div>
+    <div class="fg-stats">
+      <div class="fg-stat"><div class="v" style="color:var(--cyan)" id="fgMulRight">0</div><div class="k">本关答对</div></div>
+      <div class="fg-stat"><div class="v" style="color:var(--red)" id="fgMulWrong">0</div><div class="k">本关答错</div></div>
+    </div>
+    <div id="fgMulResult"></div>`;
+  const inp = document.getElementById('fgMulAnswer');
+  inp.addEventListener('keydown', e=>{ if(e.key==='Enter') fgMulSubmit(); });
+  fgMulRenderLevels();
+  fgMulStartLevel(1);
+}
+function fgMulRenderLevels(){
+  const box = document.getElementById('fgMulLevels');
+  if(!box) return;
+  box.innerHTML = '';
+  for(let i=1;i<=FG_MUL_MAX;i++){
+    const b = document.createElement('button');
+    b.className = 'fg-lv-btn'+(i<=state.games.mul.maxLevel?' unlocked':'')+(i===fgMulLevel?' cur':'');
+    b.textContent = i;
+    b.title = i<=state.games.mul.maxLevel ? '第 '+i+' 关（'+i+' 的口诀）' : '尚未解锁';
+    if(i > state.games.mul.maxLevel) b.disabled = true;
+    b.onclick = ()=>fgMulStartLevel(i);
+    box.appendChild(b);
+  }
+}
+function fgMulMakeQuestions(level){
+  const pool = [];
+  for(let b=1;b<=9;b++) pool.push({a:level, b:b});
+  pool.sort(()=>Math.random()-0.5);
+  return pool.slice(0, FG_MUL_Q);
+}
+function fgMulStartLevel(lv){
+  fgMulLevel = lv;
+  fgMulQuestions = fgMulMakeQuestions(lv);
+  fgMulQIndex = 0; fgMulRight = 0; fgMulWrong = 0; fgMulWaiting = false;
+  const r = document.getElementById('fgMulRight'), w = document.getElementById('fgMulWrong');
+  const cl = document.getElementById('fgMulCur'), res = document.getElementById('fgMulResult');
+  if(r) r.textContent = 0;
+  if(w) w.textContent = 0;
+  if(cl) cl.textContent = lv;
+  if(res) res.innerHTML = '';
+  fgMulRenderLevels();
+  fgMulShowQ();
+}
+function fgMulShowQ(){
+  const q = fgMulQuestions[fgMulQIndex];
+  fgMulAnswer = q.a*q.b;
+  fgMulWaiting = false;
+  const ql = document.getElementById('fgMulQLabel'), qt = document.getElementById('fgMulQTotal');
+  const bar = document.getElementById('fgMulBar'), qq = document.getElementById('fgMulQuestion');
+  const inp = document.getElementById('fgMulAnswer'), btn = document.getElementById('fgMulBtn');
+  if(ql) ql.textContent = fgMulQIndex+1;
+  if(qt) qt.textContent = FG_MUL_Q;
+  if(bar) bar.style.width = (fgMulQIndex/FG_MUL_Q*100)+'%';
+  if(qq) qq.textContent = q.a+' × '+q.b+' = ?';
+  if(inp){ inp.value = ''; inp.disabled = false; inp.focus(); }
+  if(btn){ btn.textContent = '✅ 提交'; }
+  fgMulSetMsg('info', '想一想 '+q.a+' 的口诀，答案是多少呢？');
+}
+function fgMulSetMsg(cls, txt){
+  const m = document.getElementById('fgMulMsg');
+  if(!m) return;
+  m.className = 'fg-msg '+cls; m.textContent = txt;
+}
+function fgMulNextQ(){
+  fgMulQIndex++;
+  if(fgMulQIndex >= FG_MUL_Q) fgMulLevelDone();
+  else fgMulShowQ();
+}
+function fgMulSubmit(){
+  fgEnsureAudio();
+  const inp = document.getElementById('fgMulAnswer');
+  if(!inp) return;
+  if(fgMulWaiting){ fgMulNextQ(); return; }
+  const v = inp.value.trim();
+  if(v === ''){ fgMulSetMsg('bad', '先输入你的答案哦～'); return; }
+  const num = parseInt(v, 10);
+  const q = fgMulQuestions[fgMulQIndex];
+  if(num === fgMulAnswer){
+    fgMulRight++;
+    state.progress.games.correct++;
+    saveState();
+    checkBadges();
+    const r = document.getElementById('fgMulRight');
+    if(r) r.textContent = fgMulRight;
+    fgMulSetMsg('good', '🎉 答对了！'+q.a+' × '+q.b+' = '+fgMulAnswer);
+    fgSndCorrect();
+    setTimeout(fgMulNextQ, 700);
+  }else{
+    fgMulWrong++;
+    const w = document.getElementById('fgMulWrong');
+    if(w) w.textContent = fgMulWrong;
+    fgMulWaiting = true;
+    inp.disabled = true;
+    fgMulSetMsg('bad', '答错了～ 正确答案是 '+fgMulAnswer+'。记住口诀：'+q.a+' × '+q.b+' = '+fgMulAnswer);
+    fgSndWrong();
+    const btn = document.getElementById('fgMulBtn');
+    if(btn) btn.textContent = '➡️ 下一题';
+  }
+}
+function fgMulLevelDone(){
+  const bar = document.getElementById('fgMulBar');
+  if(bar) bar.style.width = '100%';
+  const next = fgMulLevel+1;
+  const isFinal = fgMulLevel === FG_MUL_MAX;
+  let got = fgAward('mul', 3, 9);
+  state.progress.games.played++;
+  if(isFinal) got += fgAward('mul', 5, 14);
+  saveState();
+  if(next > state.games.mul.maxLevel && next <= FG_MUL_MAX){
+    state.games.mul.maxLevel = next;
+    saveState();
+    const mx = document.getElementById('fgMulMax');
+    if(mx) mx.textContent = state.games.mul.maxLevel;
+    fgMulRenderLevels();
+  }
+  const res = document.getElementById('fgMulResult');
+  if(isFinal){
+    fgSndWin();
+    burstConfetti();
+    if(res){
+      res.innerHTML = `<div class="fg-win-box">🏆🏆 全部通关！你太厉害了！<br>
+        你闯过了全部 9 关，成为乘法口诀小达人！<br>
+        本关答对 ${fgMulRight} 题，答错 ${fgMulWrong} 题。${got>0?'<br>+'+got+' ⭐ 通关大奖！':''}</div>`;
+    }
+    showToast('🏆 乘法口诀全部通关！');
+    fgMulStartLevel(1);
+  }else{
+    fgSndLevel();
+    if(res){
+      res.innerHTML = `<div class="fg-win-box">🎉 恭喜通过第 ${fgMulLevel} 关！<br>
+        本关答对 ${fgMulRight} 题，答错 ${fgMulWrong} 题${got>0?'，+'+got+' ⭐':''}。<br>
+        下一关是「${next} 的口诀」，准备好了吗？</div>`;
+    }
+    showToast('🎉 通过第 '+fgMulLevel+' 关！');
+    fgMulStartLevel(next);
+  }
+}
+function fgMulRestart(){
+  fgMulStartLevel(fgMulLevel);
+}
+
+/* ================================================================
    INIT
    ================================================================ */
 function init(){
+  // Fun games state init & migration
+  fgEnsureState();
+
   // Update monthly stats on load
   const today = todayStr();
   if(state.dailyTasks[today]){
