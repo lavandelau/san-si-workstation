@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小学生趣味小游戏大厅</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    background: linear-gradient(160deg, #fdf6ec 0%, #e8f4fd 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 20px;
+  }
+  header { text-align: center; margin-bottom: 34px; }
+  header h1 {
+    font-size: 42px;
+    color: #5b7a9d;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 0 #fff;
+  }
+  header p { margin-top: 10px; font-size: 18px; color: #8aa0b5; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    max-width: 1100px;
+    width: 100%;
+  }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+  .card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    border-radius: 26px;
+    padding: 40px 24px 34px;
+    text-align: center;
+    border: 3px solid #ffffff;
+    box-shadow: 0 8px 20px rgba(120, 140, 170, 0.18);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 14px 30px rgba(120, 140, 170, 0.3);
+  }
+  .card .icon { font-size: 72px; line-height: 1; margin-bottom: 20px; }
+  .card h2 { font-size: 28px; margin-bottom: 12px; }
+  .card p { font-size: 16px; line-height: 1.7; }
+  .card .tag {
+    margin-top: 18px;
+    background: rgba(255,255,255,0.75);
+    border-radius: 999px;
+    padding: 6px 18px;
+    font-size: 15px;
+    color: #6b7f93;
+  }
+  .card.c1 { background: #ffe8d6; } .card.c1 h2 { color: #c96f4a; }
+  .card.c2 { background: #d9f2e0; } .card.c2 h2 { color: #4d9a6b; }
+  .card.c3 { background: #e2e8ff; } .card.c3 h2 { color: #6a76c9; }
+  .card p { color: #5c6b7a; }
+  footer { margin-top: 44px; color: #a8b8c8; font-size: 14px; }
+</style>
+<meta name="theme-color" content="#5BBFB5">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="学习站">
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="./icons/favicon.png">
+<script>
+/* 离线缓存：file:// 下自动跳过，不影响本地双击打开 */
+if('serviceWorker' in navigator && location.protocol !== 'file:'){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('./sw.js').catch(function(){});
+  });
+}
+</script>
+</head>
+<body>
+  <header>
+    <h1>🎈 小学生趣味小游戏大厅 🎈</h1>
+    <p>口算练脑 · 记忆挑战 · 乘法闯关，选一个开始玩吧！</p>
+  </header>
+
+  <main class="grid">
+    <a class="card c1" href="game_24.html">
+      <div class="icon">🧮</div>
+      <h2>24点口算</h2>
+      <p>给你 4 个数字，用加减乘除算出 24！锻炼口算和思维的好帮手。</p>
+      <div class="tag">适合 3-6 年级</div>
+    </a>
+    <a class="card c2" href="game_memory.html">
+      <div class="icon">🃏</div>
+      <h2>记忆翻牌</h2>
+      <p>翻开卡片找相同的好朋友，看看你的记性有多棒！有两种难度哦。</p>
+      <div class="tag">适合 1-6 年级</div>
+    </a>
+    <a class="card c3" href="game_multiply.html">
+      <div class="icon">✖️</div>
+      <h2>乘法口诀闯关</h2>
+      <p>九九乘法口诀逐关挑战，答对前进，答错也有小老师帮忙！</p>
+      <div class="tag">适合 2-4 年级</div>
+    </a>
+  </main>
+
+  <footer>💡 所有游戏均可离线游玩，成绩会自动保存在本机</footer>
+</body>
+</html>

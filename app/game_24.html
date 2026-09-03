@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>24点口算游戏</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    background: linear-gradient(160deg, #fdf6ec 0%, #ffe9d9 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px;
+  }
+  .topbar { width: 100%; max-width: 860px; display: flex; justify-content: space-between; align-items: center; }
+  .back {
+    display: inline-block;
+    background: #ffffff;
+    color: #5b7a9d;
+    border: 2px solid #d9e4ee;
+    border-radius: 999px;
+    padding: 10px 22px;
+    font-size: 18px;
+    text-decoration: none;
+    box-shadow: 0 3px 8px rgba(120,140,170,.15);
+  }
+  .back:hover { background: #eef5fb; }
+  h1 { color: #c96f4a; font-size: 36px; margin: 18px 0 6px; text-shadow: 1px 1px 0 #fff; }
+  .subtitle { color: #9a7f6d; font-size: 17px; margin-bottom: 20px; }
+  .panel {
+    background: #ffffff;
+    border-radius: 24px;
+    border: 3px solid #ffe0c7;
+    box-shadow: 0 8px 22px rgba(200,150,110,.16);
+    padding: 26px 30px;
+    width: 100%;
+    max-width: 860px;
+    text-align: center;
+  }
+  .numbers { display: flex; justify-content: center; gap: 18px; margin: 14px 0 22px; flex-wrap: wrap; }
+  .num {
+    width: 96px; height: 96px;
+    background: #ffd9b3;
+    border: 4px solid #ffffff;
+    border-radius: 22px;
+    box-shadow: 0 5px 12px rgba(200,140,80,.25);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 46px; font-weight: bold; color: #a05a2c;
+  }
+  .row { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; margin-top: 6px; }
+  input#expr {
+    font-size: 26px;
+    padding: 12px 18px;
+    width: 340px;
+    border: 3px solid #e8d5c2;
+    border-radius: 14px;
+    outline: none;
+    text-align: center;
+    color: #6b4f3a;
+    background: #fffdf9;
+  }
+  input#expr:focus { border-color: #f0a868; }
+  button {
+    font-family: inherit;
+    font-size: 20px;
+    padding: 12px 26px;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: transform .15s ease, filter .15s ease;
+    color: #fff;
+  }
+  button:hover { transform: translateY(-2px); filter: brightness(1.05); }
+  button:active { transform: translateY(1px); }
+  .btn-ok { background: #6fbf8e; }
+  .btn-next { background: #f0a868; }
+  .btn-hint { background: #8fa8d9; }
+  .btn-reset { background: #c9a3c9; }
+  .msg { min-height: 34px; font-size: 22px; margin-top: 16px; font-weight: bold; }
+  .msg.good { color: #3f9a6b; }
+  .msg.bad { color: #d97a6a; }
+  .msg.info { color: #7a8ea5; }
+  .stats {
+    display: flex; justify-content: center; gap: 26px;
+    margin-top: 20px; flex-wrap: wrap;
+  }
+  .stat {
+    background: #fdf3ea; border-radius: 16px; padding: 12px 26px; min-width: 150px;
+  }
+  .stat .v { font-size: 34px; font-weight: bold; color: #c96f4a; }
+  .stat .k { font-size: 15px; color: #9a7f6d; margin-top: 2px; }
+  .help {
+    margin-top: 22px; background: #fff8f0; border: 2px dashed #e8cba8;
+    border-radius: 16px; padding: 14px 20px;
+    color: #8a7360; font-size: 16px; line-height: 1.8; text-align: left;
+  }
+  .modal-mask {
+    position: fixed; inset: 0; background: rgba(90,70,50,.45);
+    display: none; align-items: center; justify-content: center; z-index: 10;
+  }
+  .modal-mask.show { display: flex; }
+  .modal {
+    background: #fff; border-radius: 26px; padding: 40px 50px;
+    text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,.25);
+    max-width: 90%;
+  }
+  .modal h2 { color: #c96f4a; font-size: 34px; margin-bottom: 14px; }
+  .modal p { font-size: 20px; color: #6b5a4c; margin-bottom: 24px; line-height: 1.8; }
+</style>
+<meta name="theme-color" content="#5BBFB5">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="学习站">
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="./icons/favicon.png">
+<script>
+/* 离线缓存：file:// 下自动跳过，不影响本地双击打开 */
+if('serviceWorker' in navigator && location.protocol !== 'file:'){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('./sw.js').catch(function(){});
+  });
+}
+</script>
+</head>
+<body>
+  <div class="topbar">
+    <a class="back" href="game_hall.html">🏠 返回大厅</a>
+    <span class="back" style="background:#fff6ec">第 <b id="qIndex">1</b> 题</span>
+  </div>
+  <h1>🧮 24点口算</h1>
+  <p class="subtitle">用下面 4 个数字，每个只用一次，加减乘除算出 24！</p>
+
+  <div class="panel">
+    <div class="numbers" id="numbers"></div>
+    <div class="row">
+      <input id="expr" placeholder="例如：(3+5)×2+8" autocomplete="off">
+    </div>
+    <div class="row" style="margin-top:14px">
+      <button class="btn-ok" onclick="submitAnswer()">✅ 检查答案</button>
+      <button class="btn-hint" onclick="showHint()">💡 提示</button>
+      <button class="btn-next" onclick="nextQuestion()">➡️ 下一题</button>
+      <button class="btn-reset" onclick="resetStats()">🔄 重新开始</button>
+    </div>
+    <div class="msg info" id="msg">填好算式后点“检查答案”吧！</div>
+
+    <div class="stats">
+      <div class="stat"><div class="v" id="sCorrect">0</div><div class="k">本轮答对</div></div>
+      <div class="stat"><div class="v" id="sWrong">0</div><div class="k">本轮答错</div></div>
+      <div class="stat"><div class="v" id="sBest">0</div><div class="k">历史最高答对</div></div>
+    </div>
+
+    <div class="help">
+      📖 游戏说明：<br>
+      1. 屏幕上会出现 4 个数字，把它们用 +、-、×、÷ 和括号连起来，让结果等于 24。<br>
+      2. 每个数字必须用一次，而且只能用一次。乘号可以输入 * 或 ×，除号可以输入 / 或 ÷。<br>
+      3. 算不出来就点“💡 提示”，会告诉你一种算法哦。答对的数量会记录最高成绩！
+    </div>
+  </div>
+
+  <div class="modal-mask" id="modalMask">
+    <div class="modal">
+      <h2 id="modalTitle">🎉 太棒了！</h2>
+      <p id="modalText"></p>
+      <button class="btn-next" onclick="closeModal()">知道啦</button>
+    </div>
+  </div>
+
+<script>
+/* ============ 音效（Web Audio 生成，无外部文件） ============ */
+var audioCtx = null;
+function ensureAudio() {
+  if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
+  if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+}
+function tone(freq, start, dur, type, vol) {
+  if (!audioCtx) return;
+  var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+  o.type = type || "sine"; o.frequency.value = freq;
+  g.gain.setValueAtTime(vol || 0.18, audioCtx.currentTime + start);
+  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + start + dur);
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start(audioCtx.currentTime + start); o.stop(audioCtx.currentTime + start + dur + 0.05);
+}
+function sndCorrect() { ensureAudio(); tone(660, 0, .12); tone(880, .12, .18); }
+function sndWrong()   { ensureAudio(); tone(240, 0, .18, "square", .12); tone(180, .18, .22, "square", .12); }
+function sndWin()     { ensureAudio(); [523,659,784,1047].forEach(function(f,i){ tone(f, i*.15, .25); }); }
+
+/* ============ 24点求解器（用于出题保证有解 & 提示） ============ */
+function solve24(nums) {
+  var eps = 1e-6, ops = ["+", "-", "*", "/"];
+  function rec(vals, exprs, intOnly) {
+    if (vals.length === 1) {
+      if (Math.abs(vals[0] - 24) < eps) return exprs[0];
+      return null;
+    }
+    for (var i = 0; i < vals.length; i++) {
+      for (var j = 0; j < vals.length; j++) {
+        if (i === j) continue;
+        var rv = [], re = [];
+        for (var k = 0; k < vals.length; k++) {
+          if (k !== i && k !== j) { rv.push(vals[k]); re.push(exprs[k]); }
+        }
+        for (var oi = 0; oi < ops.length; oi++) {
+          var op = ops[oi], v, e;
+          if (op === "/" && Math.abs(vals[j]) < eps) continue;
+          if (op === "+") { v = vals[i] + vals[j]; e = "(" + exprs[i] + "+" + exprs[j] + ")"; }
+          if (op === "-") { v = vals[i] - vals[j]; e = "(" + exprs[i] + "-" + exprs[j] + ")"; }
+          if (op === "*") { v = vals[i] * vals[j]; e = "(" + exprs[i] + "*" + exprs[j] + ")"; }
+          if (op === "/") { v = vals[i] / vals[j]; e = "(" + exprs[i] + "/" + exprs[j] + ")"; }
+          if (intOnly) {
+            // 优先找整数解：跳过产生小数的步骤
+            if (Math.abs(v - Math.round(v)) > eps) continue;
+            if (v < 0) continue;
+          }
+          var r = rec(rv.concat([v]), re.concat([e]), intOnly);
+          if (r) return r;
+        }
+      }
+    }
+    return null;
+  }
+  return rec(nums.slice(), nums.map(String), true) || rec(nums.slice(), nums.map(String), false);
+}
+function prettyExpr(e) { return e.replace(/\*/g, " × ").replace(/\//g, " ÷ ").replace(/\+/g, " + ").replace(/-/g, " - ").replace(/\s+/g, " ").replace(/\( /g, "(").replace(/ \)/g, ")"); }
+
+/* ============ 游戏逻辑 ============ */
+var curNums = [], curSolution = null;
+var correct = 0, wrong = 0, qCount = 0;
+var BEST_KEY = "game24_best_correct";
+var solvedCur = false;
+
+function loadBest() {
+  var b = parseInt(localStorage.getItem(BEST_KEY) || "0", 10);
+  document.getElementById("sBest").textContent = b;
+  return b;
+}
+function genQuestion() {
+  var tries = 0;
+  do {
+    curNums = [];
+    for (var i = 0; i < 4; i++) curNums.push(1 + Math.floor(Math.random() * 10));
+    tries++;
+  } while (!solve24(curNums) && tries < 500);
+  curSolution = solve24(curNums);
+  solvedCur = false;
+  qCount++;
+  document.getElementById("qIndex").textContent = qCount;
+  var box = document.getElementById("numbers");
+  box.innerHTML = "";
+  curNums.forEach(function (n) {
+    var d = document.createElement("div");
+    d.className = "num"; d.textContent = n;
+    box.appendChild(d);
+  });
+  document.getElementById("expr").value = "";
+  setMsg("info", "想一想：这 4 个数字怎么算出 24 呢？");
+  document.getElementById("expr").focus();
+}
+function setMsg(cls, txt) {
+  var m = document.getElementById("msg");
+  m.className = "msg " + cls; m.textContent = txt;
+}
+function submitAnswer() {
+  ensureAudio();
+  if (solvedCur) { setMsg("info", "这题已经答对啦，点“下一题”继续挑战！"); return; }
+  var raw = document.getElementById("expr").value.trim();
+  if (!raw) { setMsg("bad", "先在框里填上你的算式哦～"); return; }
+  var norm = raw.replace(/×/g, "*").replace(/÷/g, "/").replace(/（/g, "(").replace(/）/g, ")").replace(/\s+/g, "");
+  if (!/^[0-9+\-*/().]+$/.test(norm)) { setMsg("bad", "算式里只能有数字和 + - * / ( ) 哦～"); sndWrong(); return; }
+  // 数字检查：必须与给出的4个数字完全一致
+  var used = norm.match(/\d+/g) || [];
+  var given = curNums.map(String).sort().join(",");
+  if (used.sort().join(",") !== given) {
+    setMsg("bad", "要把给出的 4 个数字每个都用一次，且只用一次哦！");
+    sndWrong(); return;
+  }
+  var val;
+  try { val = Function("return (" + norm + ")")(); } catch (e) { val = NaN; }
+  if (typeof val !== "number" || !isFinite(val)) { setMsg("bad", "这个算式好像不太对，再检查一下括号？"); sndWrong(); return; }
+  if (Math.abs(val - 24) < 1e-6) {
+    solvedCur = true; correct++;
+    document.getElementById("sCorrect").textContent = correct;
+    var best = loadBest();
+    if (correct > best) {
+      localStorage.setItem(BEST_KEY, String(correct));
+      document.getElementById("sBest").textContent = correct;
+      setMsg("good", "🎉 完全正确！你打破了历史最高纪录！");
+      showModal("🎉 新纪录！", "你连续答对了 <b>" + correct + "</b> 题，超越了之前的最高纪录 " + best + " 题！<br>继续保持，看看能连对多少题！");
+    } else {
+      setMsg("good", "🎉 答对了！真厉害！累计答对 " + correct + " 题。");
+    }
+    sndCorrect();
+  } else {
+    wrong++;
+    document.getElementById("sWrong").textContent = wrong;
+    setMsg("bad", "结果等于 " + Math.round(val * 100) / 100 + "，不是 24 哦，再试试！");
+    sndWrong();
+  }
+}
+function showHint() {
+  ensureAudio();
+  if (!curSolution) curSolution = solve24(curNums);
+  setMsg("info", "💡 提示：" + prettyExpr(curSolution) + " = 24（要自己再算一遍加深记忆哦！）");
+  tone(740, 0, .1); tone(740, .13, .1);
+}
+function nextQuestion() { genQuestion(); }
+function resetStats() {
+  correct = 0; wrong = 0; qCount = 0;
+  document.getElementById("sCorrect").textContent = 0;
+  document.getElementById("sWrong").textContent = 0;
+  genQuestion();
+  setMsg("info", "重新开始！加油！");
+}
+function showModal(title, html) {
+  document.getElementById("modalTitle").innerHTML = title;
+  document.getElementById("modalText").innerHTML = html;
+  document.getElementById("modalMask").classList.add("show");
+}
+function closeModal() { document.getElementById("modalMask").classList.remove("show"); }
+
+document.getElementById("expr").addEventListener("keydown", function (e) { if (e.key === "Enter") submitAnswer(); });
+loadBest();
+genQuestion();
+</script>
+</body>
+</html>
