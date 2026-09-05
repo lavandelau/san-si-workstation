@@ -2787,6 +2787,7 @@ function renderWordGrid(cat){
 }
 
 let spellCurrent = null;
+let spellLocked = false;            /* 判过答案后锁定，等孩子点「下一题」 */
 let spellScore = 0;
 let spellTotal = 0;
 
@@ -2797,6 +2798,7 @@ function startSpellGame(){
 }
 
 function nextSpellWord(){
+  spellLocked = false;
   const allWords = [];
   Object.values(englishWords).forEach(arr=>arr.forEach(w=>allWords.push(w)));
   spellCurrent = allWords[Math.floor(Math.random()*allWords.length)];
@@ -2826,27 +2828,44 @@ function nextSpellWord(){
 }
 
 function checkSpell(){
-  const input = document.getElementById('spellInput').value.trim().toLowerCase();
+  if(spellLocked) return;            /* 已判过，等点「下一题」 */
+  const inputEl = document.getElementById('spellInput');
+  const input = inputEl.value.trim().toLowerCase();
+  if(!input) return;                 /* 空着不判 */
+  spellLocked = true;
+  inputEl.disabled = true;
   spellTotal++;
   const result = document.getElementById('spellResult');
-  if(input === spellCurrent.en.toLowerCase()){
+  const isRight = (input === spellCurrent.en.toLowerCase());
+  const nextBtnHTML = '<div class="tc mt12"><button class="btn btn-primary" style="min-height:48px;padding:0 26px" '
+    + `onclick="nextSpellWord()">${isRight ? '下一题 ➡️' : '我知道了，下一题 ➡️'}</button></div>`;
+  if(isRight){
     spellScore++;
     state.progress.english.correct++;
     addStars(2);
     result.innerHTML = '<div class="result-display result-correct">太棒了！+2 ⭐</div>';
   } else {
-    result.innerHTML = `<div class="result-display result-wrong">正确答案：${spellCurrent.en}</div>`;
+    /* 答错暂停：把正确拼写和中文一起看清再走 */
+    result.innerHTML = `<div class="result-display result-wrong">正确答案：${spellCurrent.en}</div>`
+      + `<div class="tc" style="font-size:16px;font-weight:700;margin:8px 0">📖 ${spellCurrent.en} = ${spellCurrent.zh}</div>`
+      + '<div class="hint-text tc">拼错的单词要看清楚哦～</div>';
+    addErrorAuto(spellCurrent.en+' '+spellCurrent.zh, '英语', '单词拼写', '拼写错误');
   }
   state.progress.english.gamesPlayed++;
   saveState();
   checkBadges();
-  setTimeout(nextSpellWord, 1500);
+  result.innerHTML += nextBtnHTML;
+  const sd = document.getElementById('spellScoreDisplay');
+  const td = document.getElementById('spellTotalDisplay');
+  if(sd) sd.textContent = spellScore;
+  if(td) td.textContent = spellTotal;
 }
 
 let matchPairs = [];
 let matchScore = 0;
 let matchTotal = 0;
 let matchSelected = null;
+let matchPaused = null;         /* 配错后暂停：{a,b} 两张卡，等孩子点一下再继续 */
 
 function startMatchGame(){
   matchScore = 0;
@@ -2884,9 +2903,22 @@ function nextMatchRound(){
     <div id="matchResult"></div>
   `;
   matchSelected = null;
+  matchPaused = null;
 }
 
 function matchClick(btn){
+  /* 配错暂停中：点任意卡片即确认并继续，不再自动清除红框 */
+  if(matchPaused){
+    matchPaused.a.style.background = '';
+    matchPaused.a.style.borderColor = '';
+    matchPaused.b.style.background = '';
+    matchPaused.b.style.borderColor = '';
+    matchPaused = null;
+    matchSelected = null;
+    const mr = document.getElementById('matchResult');
+    if(mr) mr.innerHTML = '';
+    return;
+  }
   if(btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
   
   if(!matchSelected){
@@ -2908,24 +2940,25 @@ function matchClick(btn){
       
       const allCorrect = document.querySelectorAll('#matchGame button[data-type].correct').length;
       if(allCorrect >= 8){
-        document.getElementById('matchResult').innerHTML = '<div class="result-display result-correct">全部配对成功！+8 ⭐ 进入下一轮~</div>';
+        document.getElementById('matchResult').innerHTML =
+          '<div class="result-display result-correct">全部配对成功！+8 ⭐</div>'
+          + '<div class="tc mt12"><button class="btn btn-primary" style="min-height:48px;padding:0 26px" '
+          + 'onclick="nextMatchRound()">下一轮 ➡️</button></div>';
         state.progress.english.gamesPlayed++;
         saveState();
         checkBadges();
-        setTimeout(nextMatchRound, 2000);
       }
     } else {
+      /* 配错 → 暂停：红框保持，孩子看清楚后点一下才继续（同古诗填空的答错暂停） */
       matchSelected.style.background = '#fff0f0';
       matchSelected.style.borderColor = 'var(--red)';
       btn.style.background = '#fff0f0';
       btn.style.borderColor = 'var(--red)';
-      setTimeout(()=>{
-        matchSelected.style.background = '';
-        matchSelected.style.borderColor = '';
-        btn.style.background = '';
-        btn.style.borderColor = '';
-        matchSelected = null;
-      }, 800);
+      matchPaused = {a: matchSelected, b: btn};
+      matchTotal++;
+      document.getElementById('matchTotalDisplay').textContent = matchTotal;
+      document.getElementById('matchResult').innerHTML =
+        '<div class="result-display result-wrong">❌ 这两个不是一对哦～<br><span style="font-size:13px">看清楚它们的意思，点任意一张卡片继续</span></div>';
       return;
     }
     matchSelected = null;
@@ -5112,6 +5145,7 @@ function exitReviewPractice(){
 function nextReviewProblem(){
   const game = document.getElementById('mathGame');
   if(!game || !reviewSession) return;
+  mathAnswerLocked = false;
   const problem = genMathProblem(reviewSession.type);
   game.innerHTML = `
     <div class="tc" style="font-size:13px;color:var(--text2);margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap">
@@ -6049,9 +6083,12 @@ function genMathProblem(type){
   return {q, ans, options};
 }
 
+let mathAnswerLocked = false;   /* 答完题后锁定，等孩子点「下一题」再走（同古诗填空的答错暂停） */
+
 function nextMathProblem(type, practice){
   const game = document.getElementById('mathGame');
   if(!game) return;
+  mathAnswerLocked = false;
   const problem = genMathProblem(type);
   let flagHTML = '';
   if(practice && mathPractice){
@@ -6073,9 +6110,31 @@ function nextMathProblem(type, practice){
   `;
 }
 
+/* 手动推进下一题（「下一题」按钮用）：内部保持插旗练习/复习/计时的路由 */
+function mathNextStep(type){
+  if(mathTimedTimer && mathTimedSeconds <= 0) return;   /* 计时挑战时间到，不再出题 */
+  if(reviewSession){ nextReviewProblem(); }
+  else if(mathTimedTimer){ nextTimedProblem(); }
+  else if(mathPractice && mathPractice.done < mathPractice.total){
+    nextMathProblem(mathPractice.type, true);           /* 继续同类题练习 */
+  }
+  else if(mathPractice && mathPractice.done >= mathPractice.total){
+    mathPractice = null;                                /* 3题练完，恢复正常出题 */
+    nextMathProblem(type);
+  }
+  else { nextMathProblem(type); }
+}
+
 function checkMathAnswer(selected, correct, btn, type){
+  if(mathAnswerLocked) return;      /* 已判过，等点「下一题」，防止改答案/重复点击 */
+  mathAnswerLocked = true;
   mathTotal++;
   const result = document.getElementById('mathResult');
+  /* 锁定其余选项，避免孩子发现选错后马上改答案 */
+  btn.parentNode.querySelectorAll('.math-option').forEach(o=>{
+    if(o !== btn) o.classList.add('locked');
+  });
+  const isRight = (String(selected) === String(correct));
   /* 是否正在"同类题练习"状态 */
   const inPractice = !!(mathPractice && mathPractice.type === type && !reviewSession && !mathTimedTimer);
   if(inPractice) mathPractice.done++;
@@ -6113,20 +6172,20 @@ function checkMathAnswer(selected, correct, btn, type){
   
   saveState();
   checkBadges();
-  
-  if(!mathTimedTimer || mathTimedSeconds > 0){
-    setTimeout(()=>{
-      if(reviewSession){ nextReviewProblem(); }
-      else if(mathTimedTimer){ nextTimedProblem(); }
-      else if(mathPractice && mathPractice.done < mathPractice.total){
-        nextMathProblem(mathPractice.type, true);   /* 继续同类题练习 */
-      }
-      else if(mathPractice && mathPractice.done >= mathPractice.total){
-        mathPractice = null;                        /* 3题练完，恢复正常出题 */
-        nextMathProblem(type);
-      }
-      else { nextMathProblem(type); }
-    }, 1200);
+
+  /* 「下一题」按钮：答错一律暂停，必须点按钮才继续（同古诗填空背诵） */
+  const nextBtnHTML = '<div class="tc mt12"><button class="btn btn-primary" style="min-height:48px;padding:0 26px" '
+    + `onclick="mathNextStep('${type}')">${isRight ? '下一题 ➡️' : '我知道了，下一题 ➡️'}</button></div>`;
+
+  if(isRight){
+    /* 计时挑战：答对保持快速连答，不打断节奏 */
+    if(mathTimedTimer && mathTimedSeconds > 0){
+      setTimeout(()=>mathNextStep(type), 700);
+    } else {
+      result.innerHTML += nextBtnHTML;
+    }
+  } else {
+    result.innerHTML += nextBtnHTML;   /* 答错：停下来看清正确答案再走 */
   }
 }
 
@@ -6709,11 +6768,18 @@ function checkRedoChoice(selected, correct, btn){
   saveState();
   checkBadges();
   s.idx++;
-  setTimeout(()=>{
-    if(redoSession !== s) return;
-    if(s.idx >= s.items.length) finishRedo();
-    else renderRedoItem();
-  }, 1500);
+  /* 答完不自动跳走：点「下一题 / 我知道了」才继续，答错有时间看清正确答案 */
+  if(res){
+    res.innerHTML += '<div class="tc mt12"><button class="btn btn-primary" style="min-height:48px;padding:0 26px" '
+      + `onclick="redoNextStep()">${String(selected) === String(correct) ? '下一题 ➡️' : '我知道了，下一题 ➡️'}</button></div>`;
+  }
+}
+
+function redoNextStep(){
+  const s = redoSession;
+  if(!s) return;
+  if(s.idx >= s.items.length) finishRedo();
+  else renderRedoItem();
 }
 
 function redoMasterCard(errId, willMaster){

@@ -1,5 +1,5 @@
-/* 离线缓存 - 版本 20260903142811 */
-var CACHE = 'xuexi-zhan-20260903142811';
+/* 离线缓存 - 版本 20260905143858 */
+var CACHE = 'xuexi-zhan-20260905143858';
 var FILES = ["./", "./index.html", "./game_hall.html", "./game_24.html", "./game_memory.html", "./game_multiply.html", "./manifest.json", "./icons/icon-192.png", "./icons/icon-512.png", "./icons/icon-maskable-512.png", "./icons/apple-touch-icon.png", "./icons/favicon.png"];
 
 self.addEventListener('install', function (e) {

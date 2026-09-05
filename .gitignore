@@ -1,5 +1,10 @@
-# WorkBuddy 项目本地缓存、记忆、向量索引、会话数据，禁止提交
-.workbuddy/
+# WorkBuddy 项目本地缓存、向量索引、会话数据，禁止提交
+# 注意：用 .workbuddy/* 而非 .workbuddy/，否则无法在下面重新放行 memory 目录
+.workbuddy/*
+
+# 例外：项目记忆日志需要纳入版本管理
+!.workbuddy/memory/
+!.workbuddy/memory/**
 
 # 系统文件
 .DS_Store
