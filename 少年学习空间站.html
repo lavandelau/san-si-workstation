@@ -539,6 +539,38 @@ label{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;displa
 .fg-answer-input{font-size:26px;width:160px;text-align:center;padding:8px}
 .fg-win-box{background:linear-gradient(145deg,#FFF8E1,#FFFDF5);border:2px solid var(--yellow);border-radius:14px;padding:18px;text-align:center;font-size:15px;font-weight:700;margin-top:16px;line-height:2}
 
+/* ========== 英汉配对闯关（多邻国风格） ========== */
+.match-board{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:44px;margin:6px 0 4px}
+.match-lines{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:visible}
+.match-line{stroke:var(--green);stroke-width:4;stroke-linecap:round;opacity:.75;filter:drop-shadow(0 1px 2px rgba(0,0,0,.12))}
+.match-col{display:flex;flex-direction:column;gap:8px;position:relative;z-index:1;align-items:center}
+.match-col-title{font-size:12px;font-weight:700;color:var(--text2);text-align:center;margin-bottom:2px;letter-spacing:1px}
+/* 紧凑词块：宽度随文字自适应（约为原满列版的一半）、高度压缩；字号 12px 是可读下限，不再缩小 */
+.match-tile{position:relative;display:inline-flex;align-items:center;gap:6px;width:auto;min-width:98px;max-width:100%;min-height:36px;padding:7px 17px;
+  font-family:inherit;font-size:14px;font-weight:700;color:var(--text);text-align:left;
+  background:var(--card);border:2px solid var(--border);border-radius:10px;cursor:pointer;
+  transition:transform .12s ease,background .15s ease,border-color .15s ease,box-shadow .15s ease,opacity .2s ease}
+.match-tile:hover{transform:translateY(-2px);box-shadow:0 3px 10px rgba(0,0,0,.08)}
+.match-tile:active{transform:scale(.97)}
+.match-tile .mt-icon{flex:none;width:15px;text-align:center;font-size:11px;line-height:1;opacity:.7}
+.match-tile .mt-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.match-tile.sel{border-color:var(--cyan);background:var(--cyan-light);transform:translateY(-2px);box-shadow:0 4px 12px rgba(91,191,181,.28)}
+.match-tile.correct{border-color:var(--green);background:#e8f9ec;color:#2f9e52;cursor:default;transform:none;box-shadow:none}
+.match-tile.correct .mt-icon{opacity:1}
+.match-tile.wrong{border-color:var(--red);background:#fff0f0;cursor:default}
+.match-tile.pop{animation:matchPop .42s cubic-bezier(.34,1.56,.64,1)}
+@keyframes matchPop{0%{transform:scale(1)}45%{transform:scale(1.09)}100%{transform:scale(1)}}
+.match-tile.shake{animation:matchShake .4s ease}
+@keyframes matchShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+/* 配对成功的点赞气泡（多邻国风） */
+.match-praise{position:absolute;z-index:5;transform:translate(-50%,-50%);pointer-events:none;
+  font-size:13px;font-weight:800;color:#2f9e52;background:#e8f9ec;border:2px solid var(--green);
+  border-radius:999px;padding:3px 12px;white-space:nowrap;animation:matchPraise 1s ease forwards}
+@keyframes matchPraise{0%{opacity:0;transform:translate(-50%,-30%) scale(.6)}
+  30%{opacity:1;transform:translate(-50%,-70%) scale(1)}
+  75%{opacity:1;transform:translate(-50%,-95%) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-130%) scale(.9)}}
+
 /* ========== Responsive ========== */
 @media(max-width:768px){
   .sidebar{display:block;transform:translateX(-100%);transition:transform .25s ease;width:230px;box-shadow:4px 0 24px rgba(0,0,0,.25);padding-top:56px}
@@ -578,6 +610,9 @@ label{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;displa
   .idiom-grid{grid-template-columns:1fr}
   .idiom-detail-box .idb-idiom{font-size:20px}
   .star-rating span{font-size:18px}
+  .match-board{gap:26px}
+  .match-tile{min-height:34px;font-size:13px;padding:7px 15px;min-width:86px}
+  .match-tile .mt-icon{width:14px;font-size:11px}
 }
 @media(max-width:768px){
   .fg-hub{grid-template-columns:1fr}
@@ -2824,6 +2859,14 @@ function startMatchGame(){
   nextMatchRound();
 }
 
+/* 生成一张配对词块（icon 为卡片左侧的小图标，刻意做小；icon 传空则不渲染） */
+function mTileHTML(type, idx, val, text, icon){
+  return '<button class="match-tile" data-type="'+type+'" data-idx="'+idx+'" data-val="'+val+'" data-text="'+text+'"'
+    + ' onclick="matchClick(this)">'
+    + (icon ? '<span class="mt-icon">'+icon+'</span>' : '')
+    + '<span class="mt-text">'+text+'</span></button>';
+}
+
 function nextMatchRound(){
   const allWords = [];
   Object.values(englishWords).forEach(arr=>arr.forEach(w=>allWords.push(w)));
@@ -2833,89 +2876,174 @@ function nextMatchRound(){
     if(!selected.find(s=>s.en===w.en)) selected.push(w);
   }
   matchPairs = selected;
-  const shuffledZh = [...selected].sort(()=>Math.random()-0.5);
-  
+  /* Fisher-Yates 洗牌：sort(()=>Math.random()-0.5) 在少量元素时几乎不打乱，会出现中英一一对应 */
+  const shuffledZh = [...selected];
+  for(let i = shuffledZh.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = shuffledZh[i]; shuffledZh[i] = shuffledZh[j]; shuffledZh[j] = t;
+  }
+  /* 运气不好全对上序号时再洗一次，保证至少有一对是错位的 */
+  if(shuffledZh.every((w,i)=>w.en === selected[i].en)){
+    const t = shuffledZh[0]; shuffledZh[0] = shuffledZh[1]; shuffledZh[1] = t;
+  }
+
   document.getElementById('matchGame').innerHTML = `
     <div class="math-stat mb12">
       <div class="stat-item"><div class="stat-num" style="color:var(--cyan)" id="matchScoreDisplay">${matchScore}</div><div class="stat-label">配对成功</div></div>
       <div class="stat-item"><div class="stat-num" style="color:var(--orange)" id="matchTotalDisplay">${matchTotal}</div><div class="stat-label">总轮数</div></div>
     </div>
-    <div class="hint-text tc mb12">点击左边的英文和右边对应的中文进行配对！</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div>
-        <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:8px;text-align:center">英文</div>
-        ${selected.map((w,i)=>`<button class="btn btn-outline btn-block mb12" data-type="en" data-idx="${i}" data-val="${w.en}" onclick="matchClick(this)" style="min-height:48px">${w.en}</button>`).join('')}
+    <div class="hint-text tc mb12">🔊 点一下英语就会读出来，再点右边对应的中文配成一对！</div>
+    <div class="match-board" id="matchBoard">
+      <svg class="match-lines" id="matchLines" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="match-col">
+        <div class="match-col-title">🔤 英语</div>
+        ${selected.map((w,i)=>mTileHTML('en', i, w.en, w.en, '🔊')).join('')}
       </div>
-      <div>
-        <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:8px;text-align:center">中文</div>
-        ${shuffledZh.map((w,i)=>`<button class="btn btn-outline btn-block mb12" data-type="zh" data-idx="${i}" data-val="${w.en}" onclick="matchClick(this)" style="min-height:48px">${w.zh}</button>`).join('')}
+      <div class="match-col">
+        <div class="match-col-title">🀄 中文</div>
+        ${shuffledZh.map((w,i)=>mTileHTML('zh', i, w.en, w.zh, '')).join('')}
       </div>
     </div>
     <div id="matchResult"></div>
   `;
   matchSelected = null;
   matchPaused = null;
+  if(window.requestAnimationFrame) requestAnimationFrame(mDrawLines);
+}
+
+/* 已配对的词块之间画连线（多邻国风） */
+function mDrawLines(){
+  const board = document.getElementById('matchBoard');
+  const svg = document.getElementById('matchLines');
+  if(!board || !svg || typeof board.getBoundingClientRect !== 'function') return;
+  const br = board.getBoundingClientRect();
+  if(!br || !br.width) return;
+  const NS = 'http://www.w3.org/2000/svg';
+  while(svg.firstChild) svg.removeChild(svg.firstChild);
+  const enList = board.querySelectorAll('.match-tile.correct[data-type="en"]') || [];
+  for(let i=0;i<enList.length;i++){
+    const en = enList[i];
+    const zh = board.querySelector('.match-tile[data-type="zh"][data-val="'+en.dataset.val+'"]');
+    if(!zh) continue;
+    const a = en.getBoundingClientRect(), b = zh.getBoundingClientRect();
+    if(!a.width || !b.width) continue;
+    const line = document.createElementNS(NS, 'line');
+    line.setAttribute('x1', a.right - br.left);
+    line.setAttribute('y1', a.top + a.height/2 - br.top);
+    line.setAttribute('x2', b.left - br.left);
+    line.setAttribute('y2', b.top + b.height/2 - br.top);
+    line.setAttribute('class', 'match-line');
+    svg.appendChild(line);
+  }
+}
+
+/* 配对成功的点赞气泡：从两卡中间飘起来 */
+function mPraise(en, zh, txt){
+  const board = document.getElementById('matchBoard');
+  if(!board || typeof en.getBoundingClientRect !== 'function'
+     || typeof zh.getBoundingClientRect !== 'function'
+     || typeof board.getBoundingClientRect !== 'function') return;
+  const a = en.getBoundingClientRect(), b = zh.getBoundingClientRect(), br = board.getBoundingClientRect();
+  if(!a || !b || !br || !a.width || !b.width) return;
+  const el = document.createElement('div');
+  el.className = 'match-praise';
+  el.textContent = txt;
+  el.style.left = ((a.right + b.left)/2 - br.left) + 'px';
+  el.style.top  = (a.top + a.height/2 - br.top) + 'px';
+  board.appendChild(el);
+  setTimeout(()=>{ if(el.remove) el.remove(); }, 1000);
 }
 
 function matchClick(btn){
-  /* 配错暂停中：点任意卡片即确认并继续，不再自动清除红框 */
+  /* 配错暂停中：点任意卡片即确认并继续，不再自动清除红框（同「答错暂停」机制） */
   if(matchPaused){
-    matchPaused.a.style.background = '';
-    matchPaused.a.style.borderColor = '';
-    matchPaused.b.style.background = '';
-    matchPaused.b.style.borderColor = '';
+    matchPaused.a.classList.remove('wrong','shake');
+    matchPaused.b.classList.remove('wrong','shake');
     matchPaused = null;
     matchSelected = null;
     const mr = document.getElementById('matchResult');
     if(mr) mr.innerHTML = '';
     return;
   }
-  if(btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
-  
+  if(btn.classList.contains('correct')) return;
+
+  /* 点哪张读哪张：英语读英语，中文读中文 —— 建立「音—形—义」的连接 */
+  const type = btn.dataset.type;
+  try{ if(type==='en') speakEN(btn.dataset.text); else speakCN(btn.dataset.text); }catch(e){}
+
+  /* 还没选中任何一张 → 只选中，不配对 */
   if(!matchSelected){
     matchSelected = btn;
-    btn.style.background = 'var(--cyan-light)';
-    btn.style.borderColor = 'var(--cyan)';
-  } else {
-    matchTotal++;
-    if(matchSelected.dataset.val === btn.dataset.val){
-      matchScore++;
-      state.progress.english.correct++;
-      addStars(2);
-      matchSelected.classList.add('correct');
-      btn.classList.add('correct');
-      matchSelected.style.background = 'var(--cyan-light)';
-      matchSelected.style.borderColor = 'var(--cyan)';
-      btn.style.background = 'var(--cyan-light)';
-      btn.style.borderColor = 'var(--cyan)';
-      
-      const allCorrect = document.querySelectorAll('#matchGame button[data-type].correct').length;
-      if(allCorrect >= 8){
-        document.getElementById('matchResult').innerHTML =
-          '<div class="result-display result-correct">全部配对成功！+8 ⭐</div>'
-          + '<div class="tc mt12"><button class="btn btn-primary" style="min-height:48px;padding:0 26px" '
-          + 'onclick="nextMatchRound()">下一轮 ➡️</button></div>';
-        state.progress.english.gamesPlayed++;
-        saveState();
-        checkBadges();
-      }
-    } else {
-      /* 配错 → 暂停：红框保持，孩子看清楚后点一下才继续（同古诗填空的答错暂停） */
-      matchSelected.style.background = '#fff0f0';
-      matchSelected.style.borderColor = 'var(--red)';
-      btn.style.background = '#fff0f0';
-      btn.style.borderColor = 'var(--red)';
-      matchPaused = {a: matchSelected, b: btn};
-      matchTotal++;
-      document.getElementById('matchTotalDisplay').textContent = matchTotal;
-      document.getElementById('matchResult').innerHTML =
-        '<div class="result-display result-wrong">❌ 这两个不是一对哦～<br><span style="font-size:13px">看清楚它们的意思，点任意一张卡片继续</span></div>';
-      return;
-    }
-    matchSelected = null;
-    document.getElementById('matchScoreDisplay').textContent = matchScore;
-    document.getElementById('matchTotalDisplay').textContent = matchTotal;
+    btn.classList.add('sel');
+    return;
   }
+  /* 再点同一张 → 取消选择（避免"点两次同一张"被当成配对成功） */
+  if(matchSelected === btn){
+    btn.classList.remove('sel');
+    matchSelected = null;
+    return;
+  }
+  /* 同一侧（都是英语或都是中文）→ 只换选中，不判对错 */
+  if(matchSelected.dataset.type === btn.dataset.type){
+    matchSelected.classList.remove('sel');
+    matchSelected = btn;
+    btn.classList.add('sel');
+    return;
+  }
+
+  /* 一英一中 → 正式配对判定 */
+  matchTotal++;
+  const prev = matchSelected;
+  if(prev.dataset.val === btn.dataset.val){
+    const en = (type==='en') ? btn : prev;
+    const zh = (type==='zh') ? btn : prev;
+    matchScore++;
+    state.progress.english.correct++;
+    addStars(2);
+    prev.classList.remove('sel');
+    [en, zh].forEach(el=>{
+      el.classList.add('correct');
+      el.classList.remove('pop');
+      void el.offsetWidth;            /* 重排一次，保证动画可重复播放 */
+      el.classList.add('pop');
+    });
+    try{ fgSndMatch(); }catch(e){}
+    mDrawLines();                     /* 画出这条配对连线 */
+    mPraise(en, zh, '👍 好棒！');
+    /* 最后点的是中文 → 补读一次英语；先点中文时已经读过，不重复 */
+    if(type==='zh'){ try{ speakEN(en.dataset.text); }catch(e){} }
+
+    const allCorrect = document.querySelectorAll('#matchBoard .match-tile.correct').length;
+    if(allCorrect >= 8){
+      try{ fgSndWin(); }catch(e){}
+      document.getElementById('matchResult').innerHTML =
+        '<div class="result-display result-correct">🎉 全部配对成功！+8 ⭐</div>'
+        + '<div class="tc mt12"><button class="btn btn-primary" style="min-height:48px;padding:0 26px" '
+        + 'onclick="nextMatchRound()">下一轮 ➡️</button></div>';
+      state.progress.english.gamesPlayed++;
+      saveState();
+      checkBadges();
+    } else {
+      const mr = document.getElementById('matchResult');
+      if(mr){
+        mr.innerHTML = '<div class="result-display result-correct" style="padding:8px 12px;font-size:15px">👍 配对了！继续～</div>';
+        setTimeout(()=>{ const m2 = document.getElementById('matchResult'); if(m2 && !m2.querySelector('button')) m2.innerHTML = ''; }, 1400);
+      }
+    }
+  } else {
+    /* 配错 → 暂停：红框保持，孩子看清楚后点一下才继续 */
+    prev.classList.remove('sel');
+    [prev, btn].forEach(el=>{ el.classList.add('wrong','shake'); });
+    matchPaused = {a: prev, b: btn};
+    try{ fgSndWrong(); }catch(e){}
+    document.getElementById('matchResult').innerHTML =
+      '<div class="result-display result-wrong">❌ 这两个不是一对哦～<br><span style="font-size:13px">看清楚它们的意思，点任意一张卡片继续</span></div>';
+  }
+  matchSelected = null;
+  const sd = document.getElementById('matchScoreDisplay');
+  const td = document.getElementById('matchTotalDisplay');
+  if(sd) sd.textContent = matchScore;
+  if(td) td.textContent = matchTotal;
 }
 
 /* ================================================================
@@ -7454,9 +7582,12 @@ function init(){
   // Render initial content
   renderToday();
   updateStarDisplay();
-  
+
   // Check for badges
   checkBadges();
+
+  // 配对连线随窗口尺寸变化重绘（手机横竖屏切换、侧边栏展开收起）
+  window.addEventListener('resize', ()=>{ if(document.getElementById('matchBoard')) mDrawLines(); });
 }
 
 // Start the app
