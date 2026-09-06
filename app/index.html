@@ -2535,7 +2535,8 @@ const goalQuickDefs = [
   {text:'闯关：闯关模式连闯3关', cat:'闯关', icon:'🏆'},
   {text:'思维：思维训练做对10道题', cat:'思维', icon:'🧠'},
   {text:'英语：拼写挑战突破80分', cat:'英语', icon:'📝'},
-  {text:'古诗：把一首新诗背到90分', cat:'古诗', icon:'🌸'},
+  {text:'英语：英汉配对连对5组', cat:'英语', icon:'🧩'},
+  {text:'数学：完成「除法专项」练习', cat:'数学', icon:'➗'},
   {text:'阅读：完成2篇阅读理解全对', cat:'阅读', icon:'📚'},
   {text:'成语：故事猜成语答对8题', cat:'成语', icon:'💎'},
   {text:'阅读：课外阅读打卡1次', cat:'阅读', icon:'📖'},
@@ -2614,6 +2615,61 @@ function updateGoalDisplay(){
   }
 }
 
+/* 数学王国：按 data-mcat 选中对应题型分类并渲染 */
+function selectMathCat(mcat){
+  mathCat = mcat;
+  document.querySelectorAll('#mathCatTabs .cat-tab').forEach(t=>t.classList.toggle('active', t.dataset.mcat===mcat));
+  renderMath(mathCat);
+}
+
+/* 英语星球：按 data-ecat 选中对应子页并渲染 */
+function selectEnglishCat(ecat){
+  englishCat = ecat;
+  document.querySelectorAll('#englishCatTabs .cat-tab').forEach(t=>t.classList.toggle('active', t.dataset.ecat===ecat));
+  renderEnglish(ecat);
+}
+
+/* 根据「今日重点挑战」的目标，立即跳转到对应模块 / 子页，让孩子点完确定就直接开练 */
+function jumpToGoalTarget(text){
+  const def = goalQuickDefs.find(g=>g.text===text);
+  if(!def) return false;                       // 自定义目标无法定位到具体模块，不跳转
+  const cat = def.cat;
+  /* 跳完把视图滚到顶部，避免停留在今日页底部 */
+  const goTop = ()=>{ window.scrollTo(0,0); const m=document.getElementById('main'); if(m) m.scrollTop=0; };
+  if(cat === '数学'){
+    let mcat = null, label = '';
+    if(text.includes('两位数×两位数')){ mcat='review'; label='三下复习清单·两位数乘两位数'; }
+    else if(text.includes('大数的认识')){ mcat='preview'; label='四年级预习·大数的认识'; }
+    else if(text.includes('除法专项')){ mcat='division'; label='除法专项'; }
+    switchSection('math');
+    if(mcat) selectMathCat(mcat);
+    showToast('已为你打开「数学王国」'+(label?('· '+label):'')+'，开始挑战吧！');
+    goTop();
+    return true;
+  }
+  if(cat === '古诗'){ switchSection('chinese'); switchChineseTab('poetry'); showToast('已为你打开「诗文花园」，开始背诵吧！'); goTop(); return true; }
+  if(cat === '英语'){
+    let ecat = 'words', label = '单词分类';
+    if(text.includes('拼写')){ ecat='spell'; label='拼写挑战'; }
+    else if(text.includes('配对')){ ecat='match'; label='英汉配对'; }
+    switchSection('english'); selectEnglishCat(ecat);
+    showToast('已为你打开「英语星球」· '+label+'，开始吧！');
+    goTop();
+    return true;
+  }
+  if(cat === '闯关'){ switchSection('adventure'); setTimeout(startAdventure, 200); showToast('已为你打开「闯关冒险乐园」，开始吧！'); goTop(); return true; }
+  if(cat === '思维'){ switchSection('thinking'); showToast('已为你打开「思维训练场」，开始吧！'); goTop(); return true; }
+  if(cat === '成语'){ switchSection('chinese'); switchChineseTab('idiom'); showToast('已为你打开「成语百宝箱」，开始吧！'); goTop(); return true; }
+  if(cat === '阅读'){
+    switchSection('chinese');
+    if(text.includes('打卡')){ switchChineseTab('booklog'); showToast('已为你打开「阅读打卡」，开始吧！'); }
+    else { switchChineseTab('reading'); showToast('已为你打开「语文阅读站」，开始吧！'); }
+    goTop();
+    return true;
+  }
+  return false;
+}
+
 function renderToday(){
   const today = todayStr();
   if(!state.dailyTasks[today]) state.dailyTasks[today] = {completed:0, tasks:{}};
@@ -2665,7 +2721,8 @@ function saveTodayGoal(){
   saveState();
   renderGoalQuickPicker();
   updateGoalDisplay();
-  showToast(val ? '挑战目标已保存！加油！' : '目标已清空');
+  showToast(val ? '挑战目标已保存！正在为你打开对应功能…' : '目标已清空');
+  if(val) setTimeout(()=>jumpToGoalTarget(val), 350);   // 稍等让 toast 出现，再跳转
 }
 
 function toggleDailyTask(id){
