@@ -48,6 +48,22 @@ img{display:block;max-width:100%}
 .nav-item .nav-icon{width:22px;height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 .nav-item .nav-icon svg{width:20px;height:20px;fill:currentColor}
 
+/* ---- 侧边导航：可折叠分组（自六年级工作台移植） ---- */
+.sidebar{display:flex;flex-direction:column}
+.nav-scroll{flex:1;overflow-y:auto;padding-bottom:8px}
+.nav-group{margin-bottom:2px}
+.nav-group-head{display:flex;align-items:center;gap:8px;padding:11px 16px 11px 18px;cursor:pointer;font-size:12.5px;font-weight:700;letter-spacing:.5px;color:rgba(255,255,255,.9);background:rgba(0,0,0,.07);user-select:none;transition:background .2s}
+.nav-group-head:hover{background:rgba(0,0,0,.13)}
+.nav-group-head .ng-emoji{font-size:14px;line-height:1}
+.nav-group-head .ng-name{flex:1}
+.nav-group-head .ng-arrow{font-size:10px;transition:transform .25s;opacity:.85}
+.nav-group.collapsed .nav-group-head .ng-arrow{transform:rotate(-90deg)}
+.nav-group-body{overflow:hidden;transition:max-height .25s ease}
+.nav-group.collapsed .nav-group-body{display:none}
+.nav-group-body .nav-item{padding-left:30px;font-size:13.5px}
+.nav-sys{border-top:1px solid rgba(255,255,255,.22);padding-top:4px;flex-shrink:0}
+.nav-sys .nav-item{font-size:13.5px}
+
 .main{flex:1;margin-left:210px;padding:20px;min-height:100vh;max-width:1100px}
 .content-section{display:none;animation:fade .3s}
 .content-section.active{display:block}
@@ -61,7 +77,7 @@ img{display:block;max-width:100%}
 .sidebar-close{display:none;position:absolute;top:10px;right:10px;width:44px;height:44px;border-radius:10px;background:rgba(255,255,255,.18);color:#fff;align-items:center;justify-content:center;cursor:pointer}
 .sidebar-close svg{width:22px;height:22px;fill:#fff}
 @media(max-width:768px){
-  .sidebar{display:block;transform:translateX(-100%);transition:transform .25s ease;width:230px;box-shadow:4px 0 24px rgba(0,0,0,.25);padding-top:56px}
+  .sidebar{display:flex;transform:translateX(-100%);transition:transform .25s ease;width:230px;box-shadow:4px 0 24px rgba(0,0,0,.25);padding-top:56px}
   .sidebar.open{transform:translateX(0)}
   .sidebar-close{display:flex}
   .menu-btn{display:flex}
@@ -573,7 +589,7 @@ label{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;displa
 
 /* ========== Responsive ========== */
 @media(max-width:768px){
-  .sidebar{display:block;transform:translateX(-100%);transition:transform .25s ease;width:230px;box-shadow:4px 0 24px rgba(0,0,0,.25);padding-top:56px}
+  .sidebar{display:flex;transform:translateX(-100%);transition:transform .25s ease;width:230px;box-shadow:4px 0 24px rgba(0,0,0,.25);padding-top:56px}
   .sidebar.open{transform:translateX(0)}
   .sidebar-close{display:flex}
   .menu-btn{display:flex}
@@ -686,49 +702,90 @@ if('serviceWorker' in navigator && location.protocol !== 'file:'){
     <div class="logo-text" data-page-node-id="oxiIfcFQDYGMiEmnd9lBPU">少年学习空间站</div>
     <div class="logo-sub" data-page-node-id="TTrZEEXHucFaAeDWz7uVRN">三升四暑假衔接台</div>
   </div>
-  <div class="nav-item active" data-section="today" data-page-node-id="ggVLaSO0owb24zzET0r0Xz">
-    <span class="nav-icon" data-page-node-id="VcwTN5l5gJfERlCMf0ssDT"><svg viewBox="0 0 24 24" data-page-node-id="uqasEfBSkiztHr7eSt7Qqg"><path d="M12 2L2 9v11a1 1 0 001 1h6v-7h6v7h6a1 1 0 001-1V9z" data-page-node-id="BNl0rcCzcouoB3FSWLymjK"/></svg></span>
-    <span data-page-node-id="DV3GV8lqfimU8s0jRwcZcM">今日任务</span>
+  <div class="nav-scroll">
+    <!-- 📚 学科学习（默认展开） -->
+    <div class="nav-group" data-group="subject">
+      <div class="nav-group-head" onclick="toggleNavGroup('subject')">
+        <span class="ng-emoji">📚</span><span class="ng-name">学科学习</span><span class="ng-arrow">▼</span>
+      </div>
+      <div class="nav-group-body">
+        <div class="nav-item active" data-section="today" data-page-node-id="ggVLaSO0owb24zzET0r0Xz">
+          <span class="nav-icon" data-page-node-id="VcwTN5l5gJfERlCMf0ssDT"><svg viewBox="0 0 24 24" data-page-node-id="uqasEfBSkiztHr7eSt7Qqg"><path d="M12 2L2 9v11a1 1 0 001 1h6v-7h6v7h6a1 1 0 001-1V9z" data-page-node-id="BNl0rcCzcouoB3FSWLymjK"/></svg></span>
+          <span data-page-node-id="DV3GV8lqfimU8s0jRwcZcM">今日任务</span>
+        </div>
+        <div class="nav-item" data-section="english" data-page-node-id="9gOnDp4HWFmr8kHmq0SGGG">
+          <span class="nav-icon" data-page-node-id="EYIsJcMY893XmXIBx8W2Yv"><svg viewBox="0 0 24 24" data-page-node-id="5Km7jYONJ0IkXuBgxLR4ic"><path d="M12.87 15.07l-2.54-2.51 3.3-3.3 1.27 1.27L12.87 15.07zM19 3l-2 2-2-2v4l2 2 2-2V3zM5 15l2 2 2-2v-4l-2 2-2-2v4z" data-page-node-id="jEjtNRApNrdt8aaA0iP1wk"/></svg></span>
+          <span data-page-node-id="hyiuGunEOV2dJwXu9GWtWG">英语星球</span>
+        </div>
+        <div class="nav-item" data-section="chinese" data-page-node-id="Gcx2PCbuqKcOe5Gmp4WjxB">
+          <span class="nav-icon" data-page-node-id="B2UsyqFMg62sUlzTZFBwj7"><svg viewBox="0 0 24 24" data-page-node-id="rzcViFJrs9EQlNSlgDeRgV"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z" data-page-node-id="LBdz5BNau4DuHuHn8sd5vk"/></svg></span>
+          <span data-page-node-id="niZLLrcbq1AHPi1PrW5KFi">语文天地</span>
+        </div>
+        <div class="nav-item" data-section="math" data-page-node-id="2tdDlWxorV5wDJdONB4WFR">
+          <span class="nav-icon" data-page-node-id="jccaphQNtzm2Dcz41lf2iZ"><svg viewBox="0 0 24 24" data-page-node-id="k7vIuuBk8KAVu7crU9EFFl"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM7 5h2v2H7V5zm0 4h2v2H7V9zm0 4h2v2H7v-2zm6 6H9v-2h4v2zm0-4H9v-2h4v2zm0-4H9V9h4v2zm0-4H9V5h4v2zm4 12h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V9h2v2zm0-4h-2V5h2v2z" data-page-node-id="RY8CQFYf8VR4g9Wl7doQ0K"/></svg></span>
+          <span data-page-node-id="9zqCx6wIAZn7vxjFLDso7H">数学王国</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🧩 练习训练（默认收起） -->
+    <div class="nav-group collapsed" data-group="practice">
+      <div class="nav-group-head" onclick="toggleNavGroup('practice')">
+        <span class="ng-emoji">🧩</span><span class="ng-name">练习训练</span><span class="ng-arrow">▼</span>
+      </div>
+      <div class="nav-group-body">
+        <div class="nav-item" data-section="thinking" data-page-node-id="jB8ICdFCIcao8VLyOn9PkO">
+          <span class="nav-icon" data-page-node-id="PvobllkMfQpzzOVudTGOnQ"><svg viewBox="0 0 24 24" data-page-node-id="P5Fqn6YAYbmOp4PNmye9Hn"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm-2.5 14.5L6 13l1.4-1.4 2.1 2.1 5.6-5.6L16.5 9.4l-7 7.1z" data-page-node-id="TAX2mLLiXxjCmvHf9Hvwnq"/></svg></span>
+          <span data-page-node-id="XkXyBpn94OkeoxzU1X6nOd">思维训练场</span>
+        </div>
+        <div class="nav-item" data-section="adventure" data-page-node-id="oJeMyoiEhPGDwUmTFz0WFx">
+          <span class="nav-icon" data-page-node-id="BxFdB4AZpsxJeXqXMMuWO1"><svg viewBox="0 0 24 24" data-page-node-id="PpRnCEVGaxDDuK4dkEJ13U"><path d="M5 16L3 7l5.5 4L12 4l3.5 7L21 7l-2 9H5zm0 2h14v2H5v-2z" data-page-node-id="EIPFc6FfZSaWlgTShDdFhE"/></svg></span>
+          <span data-page-node-id="QznDdn2Xn5yyZjgiMq5eIF">闯关冒险</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🛠️ 学习工具（默认收起） -->
+    <div class="nav-group collapsed" data-group="tools">
+      <div class="nav-group-head" onclick="toggleNavGroup('tools')">
+        <span class="ng-emoji">🛠️</span><span class="ng-name">学习工具</span><span class="ng-arrow">▼</span>
+      </div>
+      <div class="nav-group-body">
+        <div class="nav-item" data-section="errors" data-page-node-id="TlDlcCDHE4TSixgomg3MHe">
+          <span class="nav-icon" data-page-node-id="dwRn7LeRvmTn1FU0eZVUmm"><svg viewBox="0 0 24 24" data-page-node-id="pPhfGYD2mlaBzo8A353KBJ"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3l5 5-5 5v-3.5c-3.5 0-6 1-7.5 3 .5-4 3.5-6.5 7.5-7V6z" data-page-node-id="QGISQXlMNtHEpB2DdU9pSE"/></svg></span>
+          <span data-page-node-id="WaIH2Fk2hWFnWlJY8DRdUE">错题记录本</span>
+        </div>
+        <div class="nav-item" data-section="links" data-page-node-id="Gvi9JEkLR4V3UO7JoWCAav">
+          <span class="nav-icon" data-page-node-id="lK1dSI56P7r7HifCqGooO8"><svg viewBox="0 0 24 24" data-page-node-id="fXcmgRy2KJpfONIfHY8OaI"><path d="M3.9 12a3.1 3.1 0 013.1-3.1h4V7H7a5 5 0 000 10h4v-1.9H7A3.1 3.1 0 013.9 12zM8 13h8v-2H8v2zm9-6h-4v1.9h4a3.1 3.1 0 010 6.2h-4V17h4a5 5 0 000-10z" data-page-node-id="Urq8cyCesyk4MCh4wJ7cYV"/></svg></span>
+          <span data-page-node-id="x1a3U29QQbz5zUuHCbrIU2">学习收藏夹</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🎮 趣味乐园（默认收起） -->
+    <div class="nav-group collapsed" data-group="fun">
+      <div class="nav-group-head" onclick="toggleNavGroup('fun')">
+        <span class="ng-emoji">🎮</span><span class="ng-name">趣味乐园</span><span class="ng-arrow">▼</span>
+      </div>
+      <div class="nav-group-body">
+        <div class="nav-item" data-section="games" data-page-node-id="F7S0fnaWOBOX3kBQLBZSAE">
+          <span class="nav-icon" data-page-node-id="HdOudRSlSyHOMM9vu6RUZw"><svg viewBox="0 0 24 24" data-page-node-id="Q31i341MEZ5Lt5EDtDnwz1"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM11 13H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4-3c-.83 0-1.5-.67-1.5-1.5S18.67 9 19.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" data-page-node-id="vWFvdtzPPvFac7tiCwn697"/></svg></span>
+          <span data-page-node-id="8S84OzX65mNEvFJlj0NaBo">趣味小游戏</span>
+        </div>
+        <div class="nav-item" data-section="pet" data-page-node-id="Eaz8jXYYMjZolDGQa0Trcc">
+          <span class="nav-icon" data-page-node-id="n548GZSZhf2vHbuHY3dWTR"><svg viewBox="0 0 24 24" data-page-node-id="uBmgScJsBkuDVozoW6GAni"><path d="M4 20h2v-8H4v8zm6 0h2V8h-2v8zm6 0h2v-5h-2v5zM12 2L7 9h10L12 2z" data-page-node-id="hQHXUxNpBJtR98WAub081E"/></svg></span>
+          <span data-page-node-id="uZZLJXEHnwzVG9rA9LIVef">宠物小屋</span>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="nav-item" data-section="english" data-page-node-id="9gOnDp4HWFmr8kHmq0SGGG">
-    <span class="nav-icon" data-page-node-id="EYIsJcMY893XmXIBx8W2Yv"><svg viewBox="0 0 24 24" data-page-node-id="5Km7jYONJ0IkXuBgxLR4ic"><path d="M12.87 15.07l-2.54-2.51 3.3-3.3 1.27 1.27L12.87 15.07zM19 3l-2 2-2-2v4l2 2 2-2V3zM5 15l2 2 2-2v-4l-2 2-2-2v4z" data-page-node-id="jEjtNRApNrdt8aaA0iP1wk"/></svg></span>
-    <span data-page-node-id="hyiuGunEOV2dJwXu9GWtWG">英语星球</span>
-  </div>
-  <div class="nav-item" data-section="chinese" data-page-node-id="Gcx2PCbuqKcOe5Gmp4WjxB">
-    <span class="nav-icon" data-page-node-id="B2UsyqFMg62sUlzTZFBwj7"><svg viewBox="0 0 24 24" data-page-node-id="rzcViFJrs9EQlNSlgDeRgV"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z" data-page-node-id="LBdz5BNau4DuHuHn8sd5vk"/></svg></span>
-    <span data-page-node-id="niZLLrcbq1AHPi1PrW5KFi">语文天地</span>
-  </div>
-  <div class="nav-item" data-section="math" data-page-node-id="2tdDlWxorV5wDJdONB4WFR">
-    <span class="nav-icon" data-page-node-id="jccaphQNtzm2Dcz41lf2iZ"><svg viewBox="0 0 24 24" data-page-node-id="k7vIuuBk8KAVu7crU9EFFl"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM7 5h2v2H7V5zm0 4h2v2H7V9zm0 4h2v2H7v-2zm6 6H9v-2h4v2zm0-4H9v-2h4v2zm0-4H9V9h4v2zm0-4H9V5h4v2zm4 12h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V9h2v2zm0-4h-2V5h2v2z" data-page-node-id="RY8CQFYf8VR4g9Wl7doQ0K"/></svg></span>
-    <span data-page-node-id="9zqCx6wIAZn7vxjFLDso7H">数学王国</span>
-  </div>
-  <div class="nav-item" data-section="thinking" data-page-node-id="jB8ICdFCIcao8VLyOn9PkO">
-    <span class="nav-icon" data-page-node-id="PvobllkMfQpzzOVudTGOnQ"><svg viewBox="0 0 24 24" data-page-node-id="P5Fqn6YAYbmOp4PNmye9Hn"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm-2.5 14.5L6 13l1.4-1.4 2.1 2.1 5.6-5.6L16.5 9.4l-7 7.1z" data-page-node-id="TAX2mLLiXxjCmvHf9Hvwnq"/></svg></span>
-    <span data-page-node-id="XkXyBpn94OkeoxzU1X6nOd">思维训练场</span>
-  </div>
-  <div class="nav-item" data-section="adventure" data-page-node-id="oJeMyoiEhPGDwUmTFz0WFx">
-    <span class="nav-icon" data-page-node-id="BxFdB4AZpsxJeXqXMMuWO1"><svg viewBox="0 0 24 24" data-page-node-id="PpRnCEVGaxDDuK4dkEJ13U"><path d="M5 16L3 7l5.5 4L12 4l3.5 7L21 7l-2 9H5zm0 2h14v2H5v-2z" data-page-node-id="EIPFc6FfZSaWlgTShDdFhE"/></svg></span>
-    <span data-page-node-id="QznDdn2Xn5yyZjgiMq5eIF">闯关冒险</span>
-  </div>
-  <div class="nav-item" data-section="games" data-page-node-id="F7S0fnaWOBOX3kBQLBZSAE">
-    <span class="nav-icon" data-page-node-id="HdOudRSlSyHOMM9vu6RUZw"><svg viewBox="0 0 24 24" data-page-node-id="Q31i341MEZ5Lt5EDtDnwz1"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM11 13H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4-3c-.83 0-1.5-.67-1.5-1.5S18.67 9 19.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" data-page-node-id="vWFvdtzPPvFac7tiCwn697"/></svg></span>
-    <span data-page-node-id="8S84OzX65mNEvFJlj0NaBo">趣味小游戏</span>
-  </div>
-  <div class="nav-item" data-section="errors" data-page-node-id="TlDlcCDHE4TSixgomg3MHe">
-    <span class="nav-icon" data-page-node-id="dwRn7LeRvmTn1FU0eZVUmm"><svg viewBox="0 0 24 24" data-page-node-id="pPhfGYD2mlaBzo8A353KBJ"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3l5 5-5 5v-3.5c-3.5 0-6 1-7.5 3 .5-4 3.5-6.5 7.5-7V6z" data-page-node-id="QGISQXlMNtHEpB2DdU9pSE"/></svg></span>
-    <span data-page-node-id="WaIH2Fk2hWFnWlJY8DRdUE">错题记录本</span>
-  </div>
-  <div class="nav-item" data-section="links" data-page-node-id="Gvi9JEkLR4V3UO7JoWCAav">
-    <span class="nav-icon" data-page-node-id="lK1dSI56P7r7HifCqGooO8"><svg viewBox="0 0 24 24" data-page-node-id="fXcmgRy2KJpfONIfHY8OaI"><path d="M3.9 12a3.1 3.1 0 013.1-3.1h4V7H7a5 5 0 000 10h4v-1.9H7A3.1 3.1 0 013.9 12zM8 13h8v-2H8v2zm9-6h-4v1.9h4a3.1 3.1 0 010 6.2h-4V17h4a5 5 0 000-10z" data-page-node-id="Urq8cyCesyk4MCh4wJ7cYV"/></svg></span>
-    <span data-page-node-id="x1a3U29QQbz5zUuHCbrIU2">学习收藏夹</span>
-  </div>
-  <div class="nav-item" data-section="pet" data-page-node-id="Eaz8jXYYMjZolDGQa0Trcc">
-    <span class="nav-icon" data-page-node-id="n548GZSZhf2vHbuHY3dWTR"><svg viewBox="0 0 24 24" data-page-node-id="uBmgScJsBkuDVozoW6GAni"><path d="M4 20h2v-8H4v8zm6 0h2V8h-2v8zm6 0h2v-5h-2v5zM12 2L7 9h10L12 2z" data-page-node-id="hQHXUxNpBJtR98WAub081E"/></svg></span>
-    <span data-page-node-id="uZZLJXEHnwzVG9rA9LIVef">宠物小屋</span>
-  </div>
-  <div class="nav-item" data-section="settings" data-page-node-id="a26lMNAlVeAJugXOUGRnk5">
-    <span class="nav-icon" data-page-node-id="y1f77AwbvvXIlmGdxLEMLY"><svg viewBox="0 0 24 24" data-page-node-id="AzOdGzKopF56nxD8lI3SWR"><path d="M19.14 12.94a7.49 7.49 0 000-1.88l2.03-1.58-2-3.46-2.4.96a7.42 7.42 0 00-1.63-.95l-.36-2.54h-4l-.36 2.54c-.59.24-1.13.56-1.63.95l-2.4-.96-2 3.46 2.03 1.58a7.49 7.49 0 000 1.88l-2.03 1.58 2 3.46 2.4-.96c.5.39 1.04.71 1.63.95l.36 2.54h4l.36-2.54c.59-.24 1.13-.56 1.63-.95l2.4.96 2-3.46-2.03-1.58zM12 15.5a3.5 3.5 0 110-7 3.5 3.5 0 010 7z" data-page-node-id="IbzMelxh3OgJRmEaVqfaTF"/></svg></span>
-    <span data-page-node-id="hU84YpMH6v0z4MiAbPS3NB">数据管理</span>
+
+  <!-- ⚙️ 系统（底部固定） -->
+  <div class="nav-sys">
+    <div class="nav-item" data-section="settings" data-page-node-id="a26lMNAlVeAJugXOUGRnk5">
+      <span class="nav-icon" data-page-node-id="y1f77AwbvvXIlmGdxLEMLY"><svg viewBox="0 0 24 24" data-page-node-id="AzOdGzKopF56nxD8lI3SWR"><path d="M19.14 12.94a7.49 7.49 0 000-1.88l2.03-1.58-2-3.46-2.4.96a7.42 7.42 0 00-1.63-.95l-.36-2.54h-4l-.36 2.54c-.59.24-1.13.56-1.63.95l-2.4-.96-2 3.46 2.03 1.58a7.49 7.49 0 000 1.88l-2.03 1.58 2 3.46 2.4-.96c.5.39 1.04.71 1.63.95l.36 2.54h4l.36-2.54c.59-.24 1.13-.56 1.63-.95l2.4.96 2-3.46-2.03-1.58zM12 15.5a3.5 3.5 0 110-7 3.5 3.5 0 010 7z" data-page-node-id="IbzMelxh3OgJRmEaVqfaTF"/></svg></span>
+      <span data-page-node-id="hU84YpMH6v0z4MiAbPS3NB">数据管理</span>
+    </div>
   </div>
 </nav>
 
@@ -2382,7 +2439,12 @@ function switchSection(name){
   if(sec) sec.classList.add('active');
 
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.querySelectorAll('.nav-item[data-section="'+name+'"]').forEach(n=>n.classList.add('active'));
+  document.querySelectorAll('.nav-item[data-section="'+name+'"]').forEach(n=>{
+    n.classList.add('active');
+    /* 目标栏目在收起的分组里时，自动展开该分组 */
+    const group = n.closest('.nav-group');
+    if(group && group.classList.contains('collapsed')) group.classList.remove('collapsed');
+  });
 
   // Render section content
   if(name==='today') renderToday();
@@ -2438,6 +2500,13 @@ function closeSidebar(){
   sb.classList.remove('open');
   bd.classList.remove('show');
 }
+
+/* 侧边导航分组折叠/展开（自六年级工作台移植） */
+function toggleNavGroup(g){
+  const el = document.querySelector('.nav-group[data-group="'+g+'"]');
+  if(el) el.classList.toggle('collapsed');
+}
+
 
 document.querySelectorAll('.nav-item').forEach(item=>{
   item.addEventListener('click',()=>{
